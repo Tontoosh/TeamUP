@@ -1,0 +1,175 @@
+.chat-layout {
+  display: grid;
+  grid-template-columns: 215px minmax(0, 1fr);
+  padding: 0;
+  overflow: hidden;
+  min-height: 600px;
+  height: calc(100dvh - 265px);
+}
+.chat-channels {
+  border-right: 1px solid #26364a;
+  padding: 25px 12px;
+  background: #0e1825;
+  overflow-y: auto;
+}
+.chat-channels .nav-label {
+  display: block;
+  margin-bottom: 23px;
+}
+.chat-channels button {
+  display: flex;
+  align-items: start;
+  gap: 8px;
+  background: transparent;
+  color: #8ba0b5;
+  text-align: left;
+  padding: 14px 10px;
+  font-size: 11px;
+  line-height: 1.7;
+  border-radius: 7px;
+  width: 100%;
+  margin-bottom: 6px;
+}
+.chat-channels button.selected {
+  color: #51d8c0;
+  background: #1a48402b;
+}
+.chat-channels button svg {
+  flex-shrink: 0;
+}
+.chat-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+.chat-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 23px;
+  border-bottom: 1px solid #26364a;
+}
+.chat-heading > div {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+}
+.chat-heading svg {
+  color: #5ab6ab;
+  flex-shrink: 0;
+}
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 25px;
+}
+.message {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+  margin-bottom: 23px;
+}
+.message-content {
+  max-width: 82%;
+  min-width: 0;
+}
+.message-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.message-meta b {
+  font-size: 10px;
+}
+.message-meta small {
+  font-size: 8px;
+  color: #778ca7;
+}
+.message-meta .icon-btn {
+  width: 23px;
+  height: 20px;
+  opacity: 0.4;
+  margin-left: auto;
+}
+.message:hover .icon-btn {
+  opacity: 1;
+}
+.message-bubble {
+  padding: 12px 16px;
+  background: #1b293c;
+  border: 1px solid #2a3a50;
+  border-radius: 0 12px 12px 12px;
+}
+.message-bubble > p {
+  font-size: 12px;
+  line-height: 1.9;
+  margin: 0;
+}
+.message-bubble a {
+  color: #5cdcc1;
+}
+.message.mine .message-bubble {
+  background: #133b35;
+  border-color: #285f53;
+}
+.attachment {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #3e665c;
+  border-radius: 7px;
+  padding: 12px;
+  margin-top: 8px;
+  font-size: 11px;
+}
+.attachment small {
+  display: block;
+  font-size: 9px;
+  color: #8daca4;
+}
+.chat-composer {
+  padding: 15px 20px;
+  border-top: 1px solid var(--line);
+}
+.composer-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.composer-row textarea {
+  border: 0;
+  background: transparent;
+  padding: 5px 0;
+  min-height: 40px;
+  max-height: 100px;
+  box-shadow: none;
+  resize: none;
+  font-size: 11px;
+}
+.composer-row .btn {
+  padding: 9px;
+  min-height: 37px;
+}
+.chat-composer .helper {
+  font-size: 9px;
+  margin-left: 49px;
+}
+.selected-file {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 13px;
+  background: #24463d;
+  font-size: 11px;
+  border-radius: 5px;
+  margin-bottom: 12px;
+}
+.selected-file button {
+  margin-left: auto;
+  background: transparent;
+}

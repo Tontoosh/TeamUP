@@ -1,0 +1,133 @@
+:root {
+  font-family: 'Noto Sans', 'Segoe UI', Arial, sans-serif;
+  color: #e8edf5;
+  background: #090e17;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --bg: #090e17;
+  --panel: #111a29;
+  --panel-raised: #162131;
+  --line: #243044;
+  --muted: #93a0b6;
+  --teal: #32dac3;
+  --teal-deep: #0a9f90;
+  --radius: 14px;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-width: 360px;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button,
+select {
+  cursor: pointer;
+}
+button {
+  color: inherit;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+input,
+select,
+textarea {
+  color: #e2e9f4;
+  background: #0e1624;
+  border: 1px solid #2a3549;
+  border-radius: 8px;
+  padding: 12px 13px;
+  width: 100%;
+  font-size: 13px;
+  outline: none;
+  min-height: 43px;
+}
+input::placeholder,
+textarea::placeholder {
+  color: #7d8ba2;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px #32dac312;
+}
+select {
+  padding-right: 27px;
+}
+textarea {
+  resize: vertical;
+}
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible,
+label:has(input[type='file']):focus-within {
+  outline: 2px solid var(--teal);
+  outline-offset: 4px;
+}
+button {
+  border: 0;
+}
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+h1,
+h2,
+h3 {
+  letter-spacing: -0.025em;
+}
+h1 {
+  font-size: 31px;
+  line-height: 1.25;
+}
+h2 {
+  font-size: 19px;
+  line-height: 1.45;
+}
+h3 {
+  font-size: 15px;
+  line-height: 1.6;
+}
+p {
+  font-size: 14px;
+  line-height: 1.85;
+}
+small {
+  font-size: 11px;
+  line-height: 1.7;
+}
+hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 24px 0;
+}
+code,
+pre {
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+}
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--muted);
+}
+::selection {
+  background: #127c72;
+  color: white;
+}

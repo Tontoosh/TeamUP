@@ -1,0 +1,69 @@
+@media (max-width: 1200px) {
+  .sidebar {
+    width: 210px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .workspace {
+    margin-left: 210px;
+    width: calc(100% - 210px);
+  }
+  .main-content {
+    padding: 24px;
+  }
+  .topbar {
+    padding: 0 24px;
+    gap: 10px;
+  }
+  .top-actions {
+    gap: 10px;
+  }
+  .account span {
+    display: none;
+  }
+  .filter-grid {
+    grid-template-columns: 1.4fr 1fr 1fr;
+  }
+  .filter-grid > .search-field {
+    grid-column: span 2;
+  }
+  .filter-grid > input {
+    grid-column: span 1;
+  }
+  .duration {
+    display: none;
+  }
+  .detail-layout {
+    grid-template-columns: 1fr 260px;
+    gap: 18px;
+  }
+  .detail-layout .panel {
+    padding: 22px;
+  }
+  .people-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .editor-layout {
+    grid-template-columns: 1fr 210px;
+    gap: 18px;
+  }
+  .profile-layout {
+    grid-template-columns: 250px 1fr;
+    gap: 18px;
+  }
+  .profile-layout .panel {
+    padding: 22px;
+  }
+  .stats-grid {
+    gap: 12px;
+  }
+  .stat-card {
+    padding: 17px;
+  }
+  .stat-card span {
+    font-size: 9px;
+  }
+  .chat-layout {
+    grid-template-columns: 175px minmax(0, 1fr);
+  }
+}

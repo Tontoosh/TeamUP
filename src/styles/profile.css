@@ -1,0 +1,90 @@
+.profile-hero {
+  padding: 0 28px 25px;
+  overflow: hidden;
+  margin-bottom: 25px;
+}
+.profile-cover {
+  height: 115px;
+  margin: 0 -28px;
+  background: radial-gradient(ellipse at 70% 100%, #287d6b44, transparent 60%),
+    repeating-linear-gradient(45deg, transparent, transparent 35px, #50be9b06 35px, #50be9b06 36px),
+    #142b35;
+}
+.profile-identity {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin-top: -30px;
+  position: relative;
+}
+.profile-identity > div:nth-child(2) {
+  margin-top: 30px;
+}
+.profile-identity h1 {
+  font-size: 24px;
+  margin: 0 0 3px;
+}
+.profile-identity p {
+  font-size: 11px;
+  margin: 0;
+}
+.profile-identity > .inline {
+  margin-left: auto;
+  margin-top: 25px;
+}
+.profile-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin-top: 25px;
+  font-size: 11px;
+  color: #95acc1;
+}
+.profile-meta > span,
+.profile-meta > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.profile-meta svg {
+  color: #64b5ad;
+}
+.profile-layout {
+  display: grid;
+  grid-template-columns: 310px 1fr;
+  gap: 24px;
+  align-items: start;
+  margin-bottom: 35px;
+}
+.profile-layout > aside h3 {
+  margin-top: 26px;
+}
+.profile-layout > aside p {
+  font-size: 12px;
+}
+.profile-layout .space-between h2 {
+  margin: 0;
+}
+.profile-layout .empty {
+  margin-top: 24px;
+  border: 0;
+}
+.portfolio-row {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 25px 0;
+  border-bottom: 1px solid var(--line);
+}
+.portfolio-row a {
+  display: flex;
+  gap: 9px;
+  font-size: 13px;
+  color: #79d7c5;
+}
+.portfolio-row p {
+  font-size: 11px;
+  margin-top: 10px;
+  margin-bottom: 0;
+}

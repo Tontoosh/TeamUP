@@ -1,0 +1,244 @@
+.results-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin: 5px 0 21px;
+}
+.results-heading h2 {
+  margin: 0;
+  font-size: 18px;
+}
+.results-heading h2 > span {
+  color: var(--teal);
+  font-size: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+  background: #133f374f;
+  border: 1px solid #276155;
+  padding: 1px 7px;
+  border-radius: 5px;
+  vertical-align: middle;
+}
+.results-heading select {
+  width: auto;
+  font-size: 10px;
+  min-height: 34px;
+  padding: 6px 11px;
+  color: #9bacc2;
+}
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.project-card {
+  border: 1px solid #253044;
+  border-radius: 12px;
+  background: linear-gradient(125deg, #131d2d, #111a29);
+  padding: 23px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.project-card:hover {
+  border-color: #3c625d;
+  transform: translateY(-2px);
+}
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 19px;
+}
+.category {
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 9px;
+  color: #a0b3e0;
+  border: 1px solid #6988df2b;
+  background: #6988df13;
+}
+.category-fintech {
+  color: #cfb0ed;
+  background: #b188d612;
+  border-color: #aa7ddb30;
+}
+.category-greentech {
+  color: #7ed4ac;
+  background: #69b88610;
+  border-color: #52c88d2a;
+}
+.category-healthtech {
+  color: #e1afbb;
+  background: #e086a711;
+  border-color: #e086a72a;
+}
+.project-name {
+  display: flex;
+  gap: 15px;
+  justify-content: space-between;
+  align-items: start;
+}
+.project-name h3 {
+  font-size: 15px;
+  line-height: 1.65;
+  margin-bottom: 9px;
+  min-height: 49px;
+}
+.project-name > svg {
+  flex-shrink: 0;
+  color: #6c829b;
+  margin-top: 4px;
+}
+.project-name:hover {
+  color: #69e9d4;
+}
+.card-description {
+  font-size: 11px;
+  color: #8e9cb1;
+  line-height: 1.9;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 42px;
+  margin-bottom: 15px;
+}
+.project-card > .tags {
+  margin-bottom: 22px;
+}
+.team-progress {
+  border: 1px solid #253145;
+  background: #1b263538;
+  padding: 12px;
+  border-radius: 7px;
+  margin-top: auto;
+}
+.team-progress > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+}
+.team-progress > div:first-child > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #93a7be;
+}
+.team-progress svg {
+  color: #44ceba;
+}
+.team-progress strong {
+  font-size: 12px;
+}
+.team-progress strong > span {
+  color: #6e8099;
+  font-size: 10px;
+  font-weight: 500;
+}
+progress {
+  appearance: none;
+  border: 0;
+  height: 4px;
+  width: 100%;
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #2a3547;
+  margin: 11px 0;
+}
+progress::-webkit-progress-bar {
+  background: #273346;
+  border-radius: 8px;
+}
+progress::-webkit-progress-value {
+  background: linear-gradient(90deg, #0aa997, #4dd9bf);
+  border-radius: 8px;
+}
+progress::-moz-progress-bar {
+  background: #22bba7;
+  border-radius: 8px;
+}
+.open-roles {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: start;
+}
+.open-roles p {
+  font-size: 9px;
+  color: #9aabc0;
+  margin: 0;
+  line-height: 1.7;
+}
+.open-roles b {
+  color: #47d5be;
+  font-size: 9px;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-top: 1px solid #253044;
+  padding-top: 16px;
+  margin-top: 18px;
+}
+.duration {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #7e90a7;
+  font-size: 8px;
+  white-space: nowrap;
+}
+.match-reason {
+  color: #59d7b9;
+  font-size: 10px;
+  margin: 0 0 15px;
+}
+.discovery-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border: 1px dashed #2f4f4d;
+  background: #122b252b;
+  border-radius: 10px;
+  padding: 23px;
+  margin-top: 30px;
+}
+.discovery-banner > div {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.discovery-banner svg {
+  color: #43c4b1;
+  flex-shrink: 0;
+}
+.discovery-banner b {
+  display: block;
+  font-size: 12px;
+}
+.discovery-banner small {
+  display: block;
+  color: #839aab;
+  font-size: 10px;
+  margin-top: 5px;
+}
+.discovery-banner > a {
+  display: flex;
+  gap: 8px;
+  color: #48d5bf;
+  font-size: 11px;
+  white-space: nowrap;
+}

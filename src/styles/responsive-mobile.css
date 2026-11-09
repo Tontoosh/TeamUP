@@ -1,0 +1,252 @@
+@media (max-width: 700px) {
+  body {
+    min-width: 360px;
+  }
+  .main-content {
+    padding: 21px 17px 30px;
+  }
+  .topbar {
+    height: 64px;
+    padding: 0 12px;
+    gap: 5px;
+  }
+  .top-actions {
+    gap: 5px;
+  }
+  .global-search {
+    max-width: none;
+  }
+  .global-search input {
+    font-size: 10px;
+  }
+  .global-search kbd,
+  .global-search > svg {
+    display: none;
+  }
+  .top-actions .compact {
+    width: 32px;
+    min-height: 32px;
+    padding: 5px;
+  }
+  .top-actions .compact span,
+  .topbar-divider,
+  .logout {
+    display: none;
+  }
+  .account .avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 9px;
+  }
+  .top-actions > .btn.ghost {
+    padding: 5px;
+    min-height: 32px;
+    font-size: 11px;
+  }
+  .breadcrumb {
+    font-size: 9px;
+    margin-bottom: 18px;
+  }
+  .discovery-hero {
+    padding: 27px 23px;
+    min-height: 285px;
+  }
+  .hero-content {
+    width: 100%;
+  }
+  .hero-content h1 {
+    font-size: 35px;
+  }
+  .hero-content p {
+    font-size: 10px;
+    max-width: 230px;
+  }
+  .hero-content .eyebrow {
+    font-size: 7px;
+  }
+  .orbit-art {
+    transform: scale(0.55);
+    transform-origin: right bottom;
+    right: -30px;
+    top: 0;
+    opacity: 0.65;
+  }
+  .art-caption {
+    display: none;
+  }
+  .filters-panel {
+    padding: 17px 14px 0;
+    margin: 19px 0 25px;
+  }
+  .filters-heading .muted {
+    display: none;
+  }
+  .filter-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .filter-grid > .search-field {
+    grid-column: span 2;
+  }
+  .filter-bottom {
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .filter-bottom > .muted {
+    width: 100%;
+    margin-bottom: 3px;
+  }
+  .filter-chip {
+    padding: 6px 9px;
+  }
+  .results-heading h2 {
+    font-size: 16px;
+  }
+  .results-heading select {
+    max-width: 145px;
+    font-size: 9px;
+  }
+  .project-grid,
+  .people-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .project-card {
+    padding: 22px;
+  }
+  .project-name h3 {
+    font-size: 16px;
+    min-height: 0;
+  }
+  .card-description {
+    font-size: 12px;
+    margin-bottom: 18px;
+  }
+  .tags > span {
+    font-size: 10px;
+  }
+  .team-progress {
+    margin-top: 0;
+  }
+  .team-progress > div:first-child,
+  .open-roles p,
+  .open-roles b {
+    font-size: 10px;
+  }
+  .duration {
+    display: flex;
+    font-size: 8px;
+  }
+  .card-footer .person b {
+    font-size: 11px;
+  }
+  .discovery-banner {
+    padding: 18px;
+    flex-direction: column;
+    align-items: start;
+  }
+  .discovery-banner > a {
+    margin-left: 37px;
+  }
+  .app-footer {
+    padding: 20px 17px;
+    font-size: 8px;
+  }
+  .page-title {
+    align-items: start;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .page-title h1 {
+    font-size: 27px;
+  }
+  .page-title p {
+    font-size: 12px;
+  }
+  .panel {
+    padding: 21px;
+  }
+  .editor-layout,
+  .detail-layout,
+  .profile-layout,
+  .data-layout {
+    grid-template-columns: 1fr;
+  }
+  .editor-help {
+    position: static;
+  }
+  .form-row,
+  .form-row.three {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .detail-heading h1 {
+    font-size: 27px;
+  }
+  .detail-layout .join-panel {
+    grid-row: 1;
+    position: static;
+  }
+  .detail-facts {
+    gap: 22px;
+  }
+  .detail-facts span {
+    font-size: 9px;
+  }
+  .list-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .list-toolbar > select {
+    width: 100%;
+  }
+  .tabs {
+    margin-bottom: 20px;
+  }
+  .tabs button {
+    font-size: 11px;
+    padding: 12px 10px;
+  }
+  .request-footer {
+    flex-direction: column;
+    align-items: start;
+  }
+  .request-card > .space-between {
+    align-items: start;
+  }
+  .request-card .person b {
+    font-size: 11px;
+  }
+  .request-card .person {
+    min-width: 0;
+  }
+  .request-card .badge {
+    font-size: 9px;
+  }
+  .profile-identity {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .profile-identity h1 {
+    font-size: 23px;
+  }
+  .profile-identity > .inline {
+    margin-left: 0;
+    margin-top: 15px;
+    width: 100%;
+  }
+  .profile-meta {
+    gap: 15px;
+    font-size: 10px;
+  }
+  .profile-layout .panel {
+    padding: 20px;
+  }
+  .profile-layout .space-between h2 {
+    font-size: 16px;
+  }
+  .chat-layout {
+    grid-template-columns: 1fr;
+    height: calc(100dvh - 225px);
+    min-height: 540px;
+  }
+}

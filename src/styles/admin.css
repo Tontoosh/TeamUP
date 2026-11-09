@@ -1,0 +1,66 @@
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 25px;
+}
+.stat-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 22px;
+}
+.stat-card svg {
+  color: #59c4ae;
+}
+.stat-card span {
+  font-size: 10px;
+  color: #a7b6c9;
+}
+.stat-card b {
+  display: block;
+  font-size: 32px;
+  width: 100%;
+  margin-top: 8px;
+}
+.table-scroll {
+  overflow: auto;
+}
+table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+th {
+  color: #7d92ac;
+  padding: 12px;
+  font-size: 10px;
+  font-weight: 500;
+  border-bottom: 1px solid var(--line);
+}
+td {
+  padding: 18px 12px;
+  border-bottom: 1px solid #243044;
+  line-height: 1.8;
+}
+tr:last-child td {
+  border-bottom: none;
+}
+.audit-entry,
+.report-row {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.audit-entry b {
+  font-size: 12px;
+}
+.audit-entry p {
+  font-size: 12px;
+  margin: 12px 0 5px;
+}
+.audit-entry small {
+  color: #859cb6;
+  font-size: 10px;
+}

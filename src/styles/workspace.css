@@ -1,0 +1,121 @@
+.main-content {
+  padding: 27px 38px 35px;
+  width: 100%;
+  max-width: 1530px;
+  margin: 0 auto;
+  flex: 1;
+}
+.demo-switcher {
+  width: 150px;
+  min-height: 34px;
+  padding: 7px 9px;
+  font-size: 10px;
+  color: var(--teal);
+}
+.global-search { min-width: 0; }
+@media (max-width: 700px) {
+  .demo-switcher { width: 115px; font-size: 9px; }
+}
+.app-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px 38px;
+  font-size: 9px;
+  color: #60728c;
+  border-top: 1px solid #1a2434;
+}
+.app-footer a {
+  color: #8ea2b5;
+}
+.breadcrumb {
+  font-size: 10px;
+  color: #78879e;
+  display: flex;
+  gap: 13px;
+  margin: 0 0 22px;
+}
+.breadcrumb > span {
+  color: #40536b;
+}
+.back-link {
+  display: inline-block;
+  color: #8198ab;
+  font-size: 12px;
+  margin-bottom: 26px;
+}
+.mobile-menu,
+.mobile-close,
+.sidebar-backdrop {
+  display: none;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin: 30px 0 10px;
+  font-size: 12px;
+}
+.pagination button {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 9px 13px;
+  background: #152030;
+  border-radius: 7px;
+  font-size: 11px;
+}
+.list-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+.list-toolbar > select {
+  width: auto;
+}
+.tabs {
+  display: flex;
+  gap: 7px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 27px;
+  overflow-x: auto;
+}
+.tabs button {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: transparent;
+  color: #8799af;
+  padding: 14px 15px;
+  white-space: nowrap;
+  font-size: 12px;
+  border-bottom: 2px solid transparent;
+}
+.tabs button.active {
+  color: var(--teal);
+  border-bottom-color: var(--teal);
+}
+.list-toolbar > .tabs {
+  margin: 0;
+}
+.info-banner {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 18px;
+  border: 1px solid #2b7065;
+  background: #1a45332b;
+  border-radius: 10px;
+  color: #abdacc;
+  font-size: 12px;
+  margin: 18px 0;
+  line-height: 1.8;
+}
+.info-banner a {
+  color: var(--teal);
+  margin-left: auto;
+  white-space: nowrap;
+}

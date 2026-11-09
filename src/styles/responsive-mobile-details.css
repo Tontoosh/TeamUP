@@ -1,0 +1,190 @@
+@media (max-width: 700px) {
+  .chat-channels {
+    padding: 12px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .chat-channels .nav-label {
+    display: none;
+  }
+  .chat-channels button {
+    width: auto;
+    min-width: 135px;
+    padding: 8px;
+    font-size: 9px;
+    margin: 0;
+  }
+  .chat-channels button span {
+    white-space: nowrap;
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .chat-heading {
+    padding: 15px;
+  }
+  .chat-heading b {
+    font-size: 10px;
+  }
+  .chat-messages {
+    padding: 18px 12px;
+  }
+  .message-content {
+    max-width: 85%;
+  }
+  .message-meta {
+    gap: 5px;
+  }
+  .message-meta b {
+    font-size: 9px;
+  }
+  .message-meta small {
+    font-size: 7px;
+  }
+  .message > .avatar {
+    width: 26px;
+    height: 26px;
+    font-size: 8px;
+  }
+  .message-bubble {
+    padding: 10px 12px;
+  }
+  .message-bubble > p {
+    font-size: 11px;
+  }
+  .chat-composer {
+    padding: 12px;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .auth-page {
+    grid-template-columns: 1fr;
+  }
+  .auth-story {
+    display: none;
+  }
+  .auth-form-wrap {
+    padding: 25px 24px;
+  }
+  .auth-form {
+    margin-top: 10px;
+  }
+  .auth-form > h2 {
+    font-size: 28px;
+  }
+  .auth-form .form-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .info-banner {
+    align-items: start;
+    flex-wrap: wrap;
+    font-size: 11px;
+  }
+  .info-banner a {
+    margin: 0;
+  }
+  .landing-nav {
+    padding: 20px;
+    gap: 10px;
+  }
+  .landing-nav .brand {
+    font-size: 20px;
+    gap: 7px;
+  }
+  .landing-nav .brand small {
+    font-size: 6px;
+  }
+  .landing-nav .brand-mark {
+    width: 33px;
+    height: 33px;
+  }
+  .landing-nav .btn {
+    min-height: 33px;
+    font-size: 9px;
+    padding: 7px 9px;
+  }
+  .landing-nav > .inline {
+    gap: 3px;
+  }
+  .landing-nav .btn svg {
+    display: none;
+  }
+  .landing-hero {
+    padding: 50px 25px 40px;
+    grid-template-columns: 1fr;
+    min-height: 0;
+    gap: 0;
+  }
+  .landing-hero h1 {
+    font-size: 59px;
+  }
+  .landing-hero .eyebrow {
+    font-size: 7px;
+  }
+  .landing-hero p {
+    font-size: 13px;
+  }
+  .landing-sculpture {
+    height: 350px;
+    margin-top: 10px;
+    transform: scale(0.82);
+  }
+  .landing-section {
+    padding: 50px 25px;
+  }
+  .landing-section h2 {
+    font-size: 29px;
+    margin-bottom: 25px;
+  }
+  .feature-grid {
+    gap: 22px;
+    margin-top: 35px;
+  }
+  .feature-grid h3 {
+    font-size: 13px;
+  }
+  .feature-grid p {
+    font-size: 11px;
+  }
+  .how-section,
+  .faq {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  .how-section h2 {
+    margin-bottom: 20px;
+  }
+  .steps {
+    padding-top: 10px;
+  }
+  .landing-section > .space-between {
+    align-items: start;
+    flex-direction: column;
+    gap: 0;
+  }
+  .landing-section > .space-between h2 {
+    font-size: 26px;
+  }
+  .landing-projects {
+    grid-template-columns: 1fr;
+  }
+  .landing-projects .project-card:last-child {
+    display: flex;
+  }
+  .landing-cta {
+    padding: 65px 25px;
+  }
+  .landing-cta h2 {
+    font-size: 45px;
+  }
+  .landing-footer {
+    padding: 35px 25px;
+    flex-direction: column;
+    align-items: start;
+  }
+}

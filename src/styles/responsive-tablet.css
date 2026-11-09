@@ -1,0 +1,72 @@
+@media (max-width: 950px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.2s;
+    width: 237px;
+  }
+  .sidebar.is-open {
+    transform: translateX(0);
+  }
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: #0009;
+    z-index: 35;
+  }
+  .mobile-menu {
+    display: inline-flex;
+  }
+  .mobile-close {
+    display: inline-flex;
+    position: absolute;
+    right: 10px;
+    top: 15px;
+  }
+  .workspace {
+    margin-left: 0;
+    width: 100%;
+  }
+  .main-content {
+    padding: 26px;
+  }
+  .topbar {
+    height: 68px;
+    padding: 0 20px;
+  }
+  .global-search {
+    max-width: 350px;
+  }
+  .top-actions {
+    margin-left: auto;
+  }
+  .orbit-art {
+    right: 0;
+  }
+  .hero-content {
+    width: 60%;
+  }
+  .landing-nav nav {
+    display: none;
+  }
+  .landing-hero {
+    padding-top: 65px;
+    min-height: 630px;
+  }
+  .landing-hero h1 {
+    font-size: 57px;
+  }
+  .landing-sculpture {
+    transform: scale(0.85);
+    transform-origin: center;
+  }
+  .feature-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .landing-projects {
+    grid-template-columns: 1fr 1fr;
+  }
+  .landing-projects .project-card:last-child {
+    display: none;
+  }
+}

@@ -1,0 +1,17 @@
+@media (min-width: 1500px) {
+  .main-content {
+    padding-top: 35px;
+  }
+  .project-name h3 {
+    font-size: 17px;
+  }
+  .card-description {
+    font-size: 12px;
+  }
+  .project-card {
+    padding: 27px;
+  }
+  .hero-content h1 {
+    font-size: 44px;
+  }
+}
