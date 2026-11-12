@@ -8,8 +8,9 @@ if (existsSync('.env')) loadEnvFile('.env');
 const db = await connectDatabase();
 await seedDatabase(db);
 const port = Number(process.env.PORT || 3001);
-const authBypass = process.env.AUTH_BYPASS !== 'false';
-const server = createApp(db, { authBypass }).listen(port, '127.0.0.1', async error => {
+const authBypass = process.env.AUTH_BYPASS === 'true';
+const host = process.env.HOST || '127.0.0.1';
+const server = createApp(db, { authBypass }).listen(port, host, async error => {
   if (error) {
     console.error(`TeamUp could not start: ${error.code} (${error.message})`);
     await db.close();

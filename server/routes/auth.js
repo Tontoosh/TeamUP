@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import * as bcrypt from '../password.js';
 import { z } from 'zod';
-import { createSession, cookieValue, cookieOptions, hashToken } from '../auth.js';
+import { createSession, cookieValue, cookieOptions, hashToken, requireUser } from '../auth.js';
 import { check, currentUser, id, now, parse, text } from '../utils.js';
 import { sendAccountLink } from '../mail.js';
 import { googleRoutes } from './google.js';
@@ -71,10 +71,27 @@ export function authRoutes(db, { bypass = false } = {}) {
       data.password,
       user?.password || '$2b$12$invalidinvalidinvalidinvalidinvalidinvalidinvalidinvalid'
     );
-    check(user && valid, 'Имэйл эсвэл нууц үг буруу байна.', 401);
-    check(user.verified, 'Имэйл хаягаа баталгаажуулна уу.', 403);
-    check(user.status === 'active', 'Бүртгэлийн эрх түдгэлзсэн байна.', 403);
-    res.json({ user: await createSession(db, user, res) });
+    const outcome = !user || !valid ? 'invalid_credentials'
+      : !user.verified ? 'unverified' : user.status !== 'active' ? 'suspended' : 'success';
+    const attempt = { id: id(), user_id: user?.id || null, outcome, created_at: now() };
+    if (outcome !== 'success') {
+      await db.insert('login_attempts', attempt);
+      check(user && valid, 'Имэйл эсвэл нууц үг буруу байна.', 401);
+      check(user.verified, 'Имэйл хаягаа баталгаажуулна уу.', 403);
+      check(user.status === 'active', 'Бүртгэлийн эрх түдгэлзсэн байна.', 403);
+    }
+    const sessionUser = await db.transaction(async () => {
+      await db.insert('login_attempts', attempt);
+      return createSession(db, user, res);
+    });
+    res.json({ user: sessionUser });
+  });
+  router.get('/login-history', requireUser, async (req, res) => {
+    const rows = await db.all(
+      'SELECT id, outcome, created_at FROM login_attempts WHERE user_id = ? ORDER BY created_at DESC, id DESC',
+      [req.user.id]
+    );
+    res.json(rows.slice(0, 50));
   });
   router.post('/logout', async (req, res) => {
     if (cookieValue(req))

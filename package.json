@@ -13,10 +13,12 @@
     "test": "node --test --test-isolation=none --test-concurrency=1 tests/*.test.js",
     "check:lines": "node scripts/check-lines.js",
     "db:check": "node scripts/check-db.js",
-    "db:test-users": "node scripts/create-test-users.js"
+    "db:test-users": "node scripts/create-test-users.js",
+    "test:integration": "node --test tests/auth-integration.test.js",
+    "start:lab10": "node scripts/start-lab10.js"
   },
   "dependencies": {
-    "csv-parse": "^6.1.0",
+    "csv-parse": "^7.0.3",
     "express": "^5.1.0",
     "lucide-react": "^0.548.0",
     "pino": "^10.4.0",
@@ -37,6 +39,6 @@
   "optionalDependencies": {
     "msnodesqlv8": "^6.2.2",
     "mssql": "^12.0.0",
-    "nodemailer": "^7.0.10"
+    "nodemailer": "^10.5.0"
   }
 }

@@ -7,6 +7,8 @@ export const tables = {
     portfolio TEXT NOT NULL, hours INTEGER NOT NULL, bio TEXT NOT NULL,
     role VARCHAR(20) NOT NULL, status VARCHAR(20) NOT NULL,
     verified INTEGER NOT NULL, created_at VARCHAR(40) NOT NULL`,
+  login_attempts: `id VARCHAR(36) PRIMARY KEY, user_id VARCHAR(36) REFERENCES users(id),
+    outcome VARCHAR(30) NOT NULL, created_at VARCHAR(40) NOT NULL`,
   sessions: `id VARCHAR(128) PRIMARY KEY, user_id VARCHAR(36) NOT NULL REFERENCES users(id),
     expires_at VARCHAR(40) NOT NULL`,
   tokens: `id VARCHAR(128) PRIMARY KEY, user_id VARCHAR(36) NOT NULL REFERENCES users(id),
@@ -62,6 +64,7 @@ export async function createSchema(db) {
     await db.run(sql);
   }
   const indexes = {
+    idx_login_user: 'login_attempts(user_id, created_at)',
     idx_project_owner: 'projects(owner_id)',
     idx_membership_user: 'memberships(user_id)',
     idx_application_project: 'applications(project_id, status)',
