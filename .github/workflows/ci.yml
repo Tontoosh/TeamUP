@@ -1,0 +1,52 @@
+name: TeamUP CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22', '24']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Unit and integration tests
+        run: node --test --test-isolation=none --test-concurrency=1 --test-reporter=junit --test-reporter-destination=test-results.xml tests/*.test.js
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-node-${{ matrix.node }}
+          path: test-results.xml
+  notify-on-failure:
+    needs: test
+    if: ${{ always() && needs.test.result == 'failure' && github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Send configured failure notification
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          CI_MAIL_TO: ${{ secrets.CI_MAIL_TO }}
+        run: node scripts/notify-ci.js
