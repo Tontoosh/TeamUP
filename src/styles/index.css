@@ -21,3 +21,7 @@
 @import './responsive-mobile.css';
 @import './responsive-mobile-details.css';
 @import './reduced-motion.css';
+
+@import './redesign.css';
+@import './redesign-landing.css';
+@import './team-scene.css';

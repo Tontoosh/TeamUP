@@ -1,0 +1,42 @@
+.team-scene { position: relative; width: 100%; height: 530px; perspective: 1100px; isolation: isolate; }
+.scene-decoration { position: absolute; inset: 0; }
+.scene-halo { position: absolute; inset: 2%; background: radial-gradient(ellipse at 50% 50%,#8178ff28,transparent 64%); filter: blur(18px); }
+.scene-grid { position: absolute; inset: 5% -5%; background-image: linear-gradient(#b6bcff09 1px,transparent 1px),linear-gradient(90deg,#b6bcff09 1px,transparent 1px); background-size: 46px 46px; mask-image: radial-gradient(ellipse,black,transparent 69%); transform: rotate(-10deg); }
+.scene-label { position: absolute; top: 24px; right: 20px; color: #848caa; font-size: 9px; letter-spacing: .23em; }
+.scene-stage { position: absolute; inset: 15% 7% 12%; transform-style: preserve-3d; transform: rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg)); transition: transform .3s ease-out; }
+.sculpture { position: absolute; width: 310px; height: 310px; left: calc(50% - 155px); top: calc(50% - 155px); transform-style: preserve-3d; animation: sculpture-float 9s ease-in-out infinite; }
+.sculpture-ring { position: absolute; inset: 0; border: 25px solid #a99dff; border-radius: 50%; transform-style: preserve-3d; box-shadow: inset 5px 6px 10px #ffffff90,inset -8px -9px 16px #392c7e,6px 8px 12px #0005,0 0 40px #8672ff12; }
+.ring-one { transform: rotateX(62deg) rotateY(-20deg) rotateZ(-25deg); background: linear-gradient(145deg,#c6baff1a,transparent); animation: ring-turn 24s linear infinite; }
+.ring-two { inset: 24px; border-width: 18px; border-color: #7ce3d3; transform: rotateX(-35deg) rotateY(60deg) rotateZ(30deg); box-shadow: inset 3px 4px 8px #ddfff9,inset -5px -5px 12px #166b73,4px 6px 14px #0006; }
+.ring-three { inset: 48px; border-width: 14px; border-color: #8b9dff; transform: rotateY(-55deg) rotateX(20deg); box-shadow: inset 3px 3px 7px #e3e7ff,inset -5px -6px 10px #303b8a,5px 6px 12px #0008; }
+.sculpture-core { position: absolute; inset: 98px; border-radius: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #e8e7ff; border: 1px solid #ffffff50; background: linear-gradient(135deg,#dad6ff33,#786dce18); backdrop-filter: blur(8px); box-shadow: 0 12px 50px #0005,inset 0 1px #ffffff50; transform: translateZ(35px) rotate(-9deg); }
+.sculpture-core svg { width: 40px; height: 40px; }
+.sculpture-core span { font-size: 13px; font-weight: 700; letter-spacing: -.04em; margin-top: 8px; }
+.orb { position: absolute; width: 32px; height: 32px; border-radius: 50%; background: radial-gradient(circle at 30% 25%,#fff,#b4a3ff 30%,#5a459d 80%); box-shadow: 8px 12px 22px #0005; }
+.orb-one { right: -12px; top: 45px; transform: translateZ(60px); }
+.orb-two { left: 4px; bottom: 8px; width: 21px; height: 21px; background: radial-gradient(circle at 30% 25%,#fff,#90eddb 30%,#236e73 80%); }
+.orb-three { right: 25px; bottom: 20px; height: 12px; width: 12px; background: #e8b99f; }
+.scene-card { position: absolute; display: flex; align-items: center; gap: 12px; padding: 17px 19px; border: 1px solid #ffffff20; border-radius: 16px; background: linear-gradient(120deg,#20253be8,#141a2be8); backdrop-filter: blur(16px); box-shadow: 0 18px 40px #0004,inset 0 1px #ffffff0c; animation: card-float 7s ease-in-out infinite; }
+.scene-card small { display: block; font-size: 8px; color: #979db7; letter-spacing: .12em; margin-bottom: 5px; }
+.scene-card b { display: block; font-size: 11px; font-weight: 600; color: #f2f1f9; white-space: nowrap; }
+.scene-card > svg { color: #bdc0e5; margin-left: 4px; }
+.scene-card-code { left: -5px; top: 67px; rotate: -7deg; }
+.scene-card-team { right: -8px; bottom: 68px; rotate: 6deg; animation-delay: -3s; }
+.scene-icon { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; background: #a6a4ff18; color: #c0baff; }
+.scene-avatars { display: flex; padding-left: 6px; }
+.scene-avatars i { display: grid; place-items: center; height: 32px; width: 30px; border: 2px solid #1b2133; border-radius: 50%; background: #c7bbf6; color: #232740; font-size: 10px; font-style: normal; font-weight: 700; margin-left: -7px; }
+.scene-avatars i:nth-child(2) { background: #a2dacc; }.scene-avatars i:nth-child(3) { background: #f0c4a6; }
+.scene-caption { position: absolute; left: 18px; right: 18px; bottom: 18px; display: flex; align-items: center; gap: 9px; font-size: 8px; letter-spacing: .18em; color: #888fa9; border-top: 1px solid #ffffff12; padding-top: 17px; }
+.scene-caption > span:last-child { margin-left: auto; color: #c1bafa; font-size: 18px; }
+.scene-dot { height: 5px; width: 5px; background: #8cddc9; border-radius: 50%; box-shadow: 0 0 12px #8cddc980; }
+.scene-pause { position: absolute; right: 42px; bottom: 10px; display: flex; align-items: center; gap: 5px; padding: 7px; background: transparent; color: #a6abc0; font-size: 9px; z-index: 2; }
+.scene-pause:hover { color: white; }
+.team-scene.is-paused * { animation-play-state: paused !important; }
+.team-scene.compact { position: absolute; width: 43%; height: 100%; right: 0; top: 0; }
+.compact .sculpture { scale: .7; }.compact .scene-card,.compact .scene-label,.compact .scene-caption { display: none; }.compact .scene-pause { bottom: 12px; right: 20px; }
+@keyframes sculpture-float { 0%,100% { transform: translateY(0) rotate(-8deg); } 50% { transform: translateY(-18px) rotate(5deg); } }
+@keyframes ring-turn { from { transform: rotateX(62deg) rotateY(-20deg) rotateZ(-25deg); } to { transform: rotateX(62deg) rotateY(-20deg) rotateZ(335deg); } }
+@keyframes card-float { 0%,100% { translate: 0 0; } 50% { translate: 0 -10px; } }
+@media(max-width:1000px) { .sculpture { scale: .87; }.scene-card { padding: 14px; }.scene-card-code { left: 0; }.scene-card-team { right: 0; } }
+@media(max-width:760px) { .team-scene { height: 440px; max-width: 440px; margin: auto; }.sculpture { scale: .85; }.scene-card-code { top: 45px; }.scene-card-team { bottom: 60px; }.team-scene.compact { width: 42%; opacity: .45; }.compact .sculpture { scale: .5; }.compact .scene-pause { right: 10px; } }
+@media(prefers-reduced-motion:reduce) { .team-scene * { animation: none !important; }.scene-stage { transform: none; transition: none; }.sculpture { transform: rotate(-8deg); }.scene-pause { display: none; } }

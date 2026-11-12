@@ -19,7 +19,7 @@ export const post = <T = { ok: boolean }>(path: string, data: unknown = {}) =>
 export const patch = <T = { ok: boolean }>(path: string, data: unknown = {}) =>
   api<T>(path, { method: 'PATCH', body: JSON.stringify(data) });
 export const date = (value: string) =>
-  new Intl.DateTimeFormat('mn-MN', {
+  !value || Number.isNaN(new Date(value).getTime()) ? 'Огноо байхгүй' : new Intl.DateTimeFormat('mn-MN', {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
@@ -33,3 +33,5 @@ export const splitList = (value: string) => [
       .filter(Boolean)
   ),
 ];
+
+

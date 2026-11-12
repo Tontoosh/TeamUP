@@ -54,8 +54,14 @@ export function createApp(db, { authBypass = false } = {}) {
       return res.status(429).json({ message: 'Олон оролдлого хийлээ. Түр хүлээнэ үү.' });
     next();
   });
+  app.use('/api', async (_req, _res, next) => {
+    try { if (db.refreshSource) await db.refreshSource(); next(); } catch (error) { next(error); }
+  });
   app.use('/api', authentication(db, { bypass: authBypass }));
-  app.get('/api/health', (_req, res) => res.json({ ok: true, database: db.driver }));
+  app.get('/api/health', async (_req, res) => {
+    await db.get('SELECT 1 AS connected');
+    res.json({ ok: true, database: db.driver, sourceSchema: db.sourceSchema || 'app' });
+  });
   app.get('/api/reference', async (_req, res) =>
     res.json(await db.all('SELECT * FROM reference_data'))
   );
@@ -81,3 +87,4 @@ export function createApp(db, { authBypass = false } = {}) {
   });
   return app;
 }
+

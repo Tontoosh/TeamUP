@@ -5,3 +5,8 @@ data/
 test-results/
 playwright-report/
 *.tsbuildinfo
+
+work/
+outputs/
+coverage/
+*.log

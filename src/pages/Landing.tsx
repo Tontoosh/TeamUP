@@ -1,5 +1,6 @@
+import { TeamScene } from '../components/TeamScene';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, MessageSquare, Network, Rocket, Sparkles, Users } from 'lucide-react';
+import { ArrowUpRight, MessageSquare, Rocket, Sparkles, Users } from 'lucide-react';
 import { useApp } from '../context';
 import { useApi } from '../hooks';
 import type { Page, Project } from '../types';
@@ -34,15 +35,14 @@ export function Landing() {
             <span className="eyebrow">
               <span className="live-dot" /> ОЮУТНЫ СТАРТАП ХАМТЫН АЖИЛЛАГААНЫ ПЛАТФОРМ
             </span>
-            <h1>
-              Санаагаа
-              <br />
-              <em>хамтдаа</em>
-              <br />
-              бодит болгоё.
+            <div className="hero-kicker">BIG IDEAS. REAL CONNECTIONS.</div>
+            <h1 className="animated-heading">
+              <span>Том санааг</span>
+              <span className="accent-word">хамтдаа <i>✳</i></span>
+              <span>бодит болгоё<span className="headline-period">.</span></span>
             </h1>
             <p>
-              Ур чадвараараа нэгдэж, төсөлдөө тохирох
+              Ур чадвараараа нэгдэж, төсөлдөө тохирох{' '}
               <br />
               хамтрагчаа олж, багаараа бүтээ.
             </p>
@@ -64,26 +64,9 @@ export function Landing() {
               <span>Таны дараагийн баг эндээс эхэлнэ.</span>
             </div>
           </div>
-          <div className="landing-sculpture" aria-hidden="true">
-            <div className="sculpture-ring" />
-            <div className="sculpture-core">
-              <Network size={100} strokeWidth={1} />
-            </div>
-            <span className="floating-label label-idea">
-              <Sparkles size={17} />
-              Таны санаа
-            </span>
-            <span className="floating-label label-people">
-              <Users size={17} />
-              Зөв хүмүүс
-            </span>
-            <span className="floating-label label-project">
-              <Rocket size={17} />
-              Бодит бүтээл
-            </span>
-            <div className="sculpture-grid" />
-          </div>
+          <TeamScene />
         </section>
+        <div className="creative-strip" aria-hidden="true"><span>САНАА</span><i>✳</i><span>ХҮМҮҮС</span><i>✳</i><span>ХАМТЫН ХҮЧ</span><i>✳</i><span>БОДИТ БҮТЭЭЛ</span><i>↗</i></div>
         <section className="landing-section" id="features">
           <span className="eyebrow">БОЛОМЖУУДАА НЭЭ</span>
           <h2>
@@ -166,7 +149,7 @@ export function Landing() {
             <div>
               <span className="eyebrow">ТАНЫ ДАРААГИЙН БОЛОМЖ</span>
               <h2>Хамтдаа бүтээх төслүүд.</h2>
-              <p className="muted">Туршилтын орчны зохиомол жишээ төслүүд.</p>
+              <p className="muted">Шинэ санаа, бодит багууд. Өөрт тохирох төслөө олоорой.</p>
             </div>
             <Link className="text-btn" to="/projects">
               Бүх төсөл үзэх
@@ -230,3 +213,5 @@ export function Landing() {
     </div>
   );
 }
+
+

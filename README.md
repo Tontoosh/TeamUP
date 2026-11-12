@@ -1,5 +1,13 @@
 # Хамтдаа · TeamUp
 
+## Windows дээрх одоогийн тохиргоо
+
+Энэ компьютер дээр `tontooshko` серверийн `TeamUpDB` санд Windows Authentication-аар холбогдоно.
+`start-teamup.cmd` файлыг нээж ажиллуулна. Дэлгэрэнгүй заавар: `WINDOWS-SETUP.md`.
+Холболтыг зөвхөн шалгах: `npm run db:check`. Одоогийн `.env` нь demo өгөгдөл үүсгэхгүй, нэвтрэлт алгасахгүй.
+
+Доорх SQLite заавар нь `.env.example`-ээс шинээр тохируулах хувилбар юм.
+
 Оюутнуудын стартап хамтын ажиллагааны платформ. Эх шаардлага:
 `/home/tontooshko/Desktop/hugjuulelt/fcsa312_hw/assignment1.pdf`.
 Монгол интерфейс, PDF-ийн хар хөх/оюу ногоон прототип, гар утасны зохиомжтой.
@@ -155,3 +163,4 @@ NFR-үүдийг баталгаажуулаагүй. Хайлт одоогоор
 
 Юзкейсийн дэлгэрэнгүй: [docs/requirements.md](docs/requirements.md).
 # TeamUP
+
