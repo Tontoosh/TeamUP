@@ -2,7 +2,9 @@ export async function api<T = { ok: boolean }>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const response = await fetch(`/api${path}`, {
+  let response: Response;
+  try {
+    response = await fetch(`/api${path}`, {
     credentials: 'same-origin',
     ...options,
     headers:
@@ -10,7 +12,16 @@ export async function api<T = { ok: boolean }>(
         ? options.headers
         : { 'Content-Type': 'application/json', ...options.headers },
   });
-  const data = await response.json();
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') throw error;
+    throw new Error('Сервертэй холбогдож чадсангүй. Сүлжээгээ шалгаад дахин оролдоно уу.');
+  }
+  let data;
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error('Серверээс буруу хариу ирлээ. Дахин оролдоно уу.');
+  }
   if (!response.ok) throw new Error(data.message || 'Алдаа гарлаа. Дахин оролдоно уу.');
   return data;
 }
