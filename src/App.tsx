@@ -1,3 +1,4 @@
+import { PageMotion } from './components/PageMotion';
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useApp } from './context';
@@ -40,6 +41,7 @@ export function App() {
   return (
     <BrowserRouter>
       <ScrollTop />
+      <PageMotion />
       <Routes>
         <Route path="/" element={<Landing />} />
         {(['login', 'register', 'forgot', 'reset', 'verify'] as const).map(mode => (
@@ -76,3 +78,4 @@ export function App() {
     </BrowserRouter>
   );
 }
+

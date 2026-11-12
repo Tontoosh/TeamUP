@@ -9,7 +9,7 @@ export function ProjectCard({ project }: { project: Project }) {
     <article className="project-card">
       <div className="card-top">
         <span className={`category category-${project.category.toLowerCase()}`}>
-          {project.category}
+          {project.category || project.project_type || 'Төсөл'}
         </span>
         <Badge status={project.status} />
       </div>
@@ -49,9 +49,10 @@ export function ProjectCard({ project }: { project: Project }) {
           </span>
         </Link>
         <span className="duration">
-          <Clock3 size={13} /> {project.duration} долоо хоног
+          <Clock3 size={13} /> {project.duration ? project.duration + ' долоо хоног' : 'Хугацаа тодорхойгүй'}
         </span>
       </div>
     </article>
   );
 }
+

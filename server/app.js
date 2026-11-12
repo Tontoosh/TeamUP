@@ -1,4 +1,5 @@
 import express from 'express';
+import { AppError, requestIdentity, errorHandler } from './errors.js';
 import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { authentication } from './auth.js';
@@ -14,6 +15,7 @@ export function createApp(db, { authBypass = false } = {}) {
   authBypass = authBypass && process.env.NODE_ENV !== 'production' && db.driver === 'sqlite';
   const app = express();
   app.disable('x-powered-by');
+  app.use(requestIdentity);
   app.use((_req, res, next) => {
     res.set({
       'X-Content-Type-Options': 'nosniff',
@@ -54,8 +56,14 @@ export function createApp(db, { authBypass = false } = {}) {
       return res.status(429).json({ message: 'Олон оролдлого хийлээ. Түр хүлээнэ үү.' });
     next();
   });
+  app.use('/api', async (_req, _res, next) => {
+    try { if (db.refreshSource) await db.refreshSource(); next(); } catch (error) { next(error); }
+  });
   app.use('/api', authentication(db, { bypass: authBypass }));
-  app.get('/api/health', (_req, res) => res.json({ ok: true, database: db.driver }));
+  app.get('/api/health', async (_req, res) => {
+    await db.get('SELECT 1 AS connected');
+    res.json({ ok: true, database: db.driver, sourceSchema: db.sourceSchema || 'app' });
+  });
   app.get('/api/reference', async (_req, res) =>
     res.json(await db.all('SELECT * FROM reference_data'))
   );
@@ -66,18 +74,13 @@ export function createApp(db, { authBypass = false } = {}) {
   app.use('/api/chat', chatRoutes(db));
   app.use('/api/community', communityRoutes(db));
   app.use('/api/admin', adminRoutes(db));
-  app.use('/api', (_req, res) => res.status(404).json({ message: 'API зам олдсонгүй.' }));
+  app.use('/api', (_req, _res, next) => next(new AppError(404, 'API зам олдсонгүй.', 'NOT_FOUND')));
   const dist = resolve('dist');
   if (existsSync(dist)) {
     app.use(express.static(dist));
     app.get('/{*path}', (_req, res) => res.sendFile(resolve(dist, 'index.html')));
   }
-  app.use((error, _req, res, _next) => {
-    const status = error.status || (error.code?.startsWith('LIMIT_') ? 400 : 500);
-    if (status >= 500) console.error(error);
-    res.status(status).json({
-      message: status >= 500 ? 'Серверийн алдаа гарлаа. Дахин оролдоно уу.' : error.message,
-    });
-  });
+  app.use(errorHandler());
   return app;
 }
+

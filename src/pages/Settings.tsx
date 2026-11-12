@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { LoginHistory } from '../components/LoginHistory';
 import { Link } from 'react-router-dom';
 import { ShieldBan } from 'lucide-react';
 import { api } from '../api';
@@ -68,6 +69,7 @@ export function Settings() {
           ))
         )}
       </section>
+      <LoginHistory />
       {target && (
         <Modal title="Блок цуцлах уу?" close={() => setTarget('')}>
           <p>Энэ хэрэглэгчтэй шинэ хүсэлт солилцох боломжтой болно.</p>

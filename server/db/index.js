@@ -2,24 +2,18 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { createSchema } from './schema.js';
+import { sqlServerConnection } from './sqlserver.js';
+import { bindSqlParameters } from './sql-parameters.js';
+import { installSourceMapping } from './source-schema.js';
 
 export async function connectDatabase() {
   const driver = process.env.DB_DRIVER || 'sqlite';
   const context = new AsyncLocalStorage();
   let sqlite, pool, mssql;
   if (driver === 'mssql') {
-    mssql = (await import('mssql')).default;
-    pool = await mssql.connect({
-      server: process.env.SQL_SERVER || 'localhost',
-      port: Number(process.env.SQL_PORT || 1433),
-      database: process.env.SQL_DATABASE || 'teamup',
-      user: process.env.SQL_USER,
-      password: process.env.SQL_PASSWORD,
-      options: {
-        encrypt: true,
-        trustServerCertificate: process.env.SQL_TRUST_CERTIFICATE === 'true',
-      },
-    });
+    const connection = await sqlServerConnection();
+    mssql = connection.sql;
+    pool = await new mssql.ConnectionPool(connection.config).connect();
   } else if (driver === 'sqlite') {
     const { DatabaseSync } = await import('node:sqlite');
     const file = process.env.SQLITE_PATH || './data/teamup.db';
@@ -39,9 +33,7 @@ export async function connectDatabase() {
         : statement.all(...params);
     }
     const request = new mssql.Request(context.getStore() || pool);
-    let index = 0;
-    const prepared = sql.replace(/\?/g, () => `@p${index++}`);
-    params.forEach((value, i) => request.input(`p${i}`, value));
+    const prepared = bindSqlParameters(request, !write && db.mapRead ? db.mapRead(sql) : sql, params);
     const result = await request.query(prepared);
     return write
       ? { changes: result.rowsAffected[0] }
@@ -68,12 +60,16 @@ export async function connectDatabase() {
       return values;
     },
     async update(table, id, values) {
+      const apply = async () => {
+      if (db.sourceUpdate) await db.sourceUpdate(table, id, values);
       await db.run(
         `UPDATE ${table} SET ${Object.keys(values)
           .map(key => `${key} = ?`)
           .join(',')} WHERE id = ?`,
         [...Object.values(values), id]
       );
+      };
+      return db.sourceUpdate && !context.getStore() ? db.transaction(apply) : apply();
     },
     async transaction(callback) {
       // Serialize local writers; SQL Server additionally locks rows with SERIALIZABLE.
@@ -103,6 +99,18 @@ export async function connectDatabase() {
     },
     close: () => (sqlite ? sqlite.close() : pool.close()),
   };
-  await createSchema(db);
+  try {
+    await createSchema(db);
+    await installSourceMapping(db);
+  } catch (error) {
+    await db.close();
+    throw error;
+  }
   return db;
 }
+
+
+
+
+
+

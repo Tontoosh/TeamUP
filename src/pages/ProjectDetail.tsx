@@ -90,18 +90,18 @@ export function ProjectDetail() {
               <Target size={18} />
               Бидний зорилго
             </h3>
-            <p className="preserve-text muted">{project.goal}</p>
+            <p className="preserve-text muted">{project.goal || 'Мэдээлэл оруулаагүй'}</p>
             <div className="detail-facts">
               <div>
                 <CalendarDays size={19} />
                 <span>
-                  Үргэлжлэх хугацаа<b>{project.duration} долоо хоног</b>
+                  Үргэлжлэх хугацаа<b>{project.duration ? project.duration + ' долоо хоног' : 'Тодорхойгүй'}</b>
                 </span>
               </div>
               <div>
                 <Clock3 size={19} />
                 <span>
-                  Оролцох боломж<b>{project.hours} цаг / 7 хоног</b>
+                  Оролцох боломж<b>{project.hours ? project.hours + ' цаг / 7 хоног' : 'Тодорхойгүй'}</b>
                 </span>
               </div>
             </div>
@@ -265,3 +265,4 @@ export function ProjectDetail() {
     </>
   );
 }
+

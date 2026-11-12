@@ -92,11 +92,11 @@ export function Profile() {
         <div className="profile-meta">
           <span>
             <GraduationCap size={17} />
-            {user.school} · {user.major}
+            {[user.school, user.major].filter(Boolean).join(' · ') || 'Сургалтын мэдээлэл оруулаагүй'}
           </span>
           <span>
             <Clock3 size={17} />
-            {user.hours} цаг / 7 хоног
+            {user.hours ? user.hours + ' цаг / 7 хоног' : user.availability === 'available' ? 'Хамтран ажиллах боломжтой' : user.availability === 'busy' ? 'Завгүй' : 'Цагийн мэдээлэл оруулаагүй'}
           </span>
           {user.portfolio && (
             <a href={user.portfolio} target="_blank" rel="noreferrer">
@@ -263,3 +263,4 @@ export function Profile() {
     </>
   );
 }
+

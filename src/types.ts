@@ -9,6 +9,7 @@ export interface User {
   experience: string;
   portfolio: string;
   hours: number;
+  availability?: string;
   bio: string;
   role: string;
   status: string;
@@ -30,6 +31,7 @@ export interface Project {
   skills: string[];
   roles: string[];
   hours: number;
+  availability?: string;
   status: string;
   visibility: string;
   created_at: string;
@@ -108,3 +110,4 @@ export interface Page<T> {
   pages: number;
   page: number;
 }
+

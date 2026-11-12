@@ -1,10 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
+import { AppError, ValidationError } from './errors.js';
 
 export const id = () => randomUUID();
 export const now = () => new Date().toISOString();
 export const fail = (status, message) => {
-  throw Object.assign(new Error(message), { status });
+  throw new AppError(status, message);
 };
 export const check = (condition, message, status = 400) => {
   if (!condition) fail(status, message);
@@ -19,11 +20,15 @@ export const link = z.union([z.literal(''), z.url().refine(url => /^https?:\/\//
 export const strings = z.array(text(1, 80)).max(30);
 export const parse = (schema, body) => {
   const result = schema.safeParse(body);
-  check(
-    result.success,
-    result.error?.issues.map(issue => `${issue.path.join('.')}: ${issue.message}`).join('; ') ||
-      'Мэдээлэл буруу байна.'
-  );
+  if (!result.success) {
+    const details = result.error.issues.map(issue => ({
+      field: issue.path.join('.'),
+      message: issue.code === 'too_small' ? 'Утга хоосон эсвэл хэт богино байна.'
+        : issue.code === 'too_big' ? 'Зөвшөөрсөн хязгаараас хэтэрсэн байна.'
+        : 'Утгын төрөл эсвэл формат буруу байна.',
+    }));
+    throw new ValidationError(details.map(item => `${item.field}: ${item.message}`).join('; '), details);
+  }
   return result.data;
 };
 export const decode = row =>

@@ -1,4 +1,25 @@
+# TeamUP лаборатори 6, 8, 9, 10
+
+Лабораторийн тайлан: [lab6](docs/labs/lab6.md), [lab8](docs/labs/lab8.md),
+[lab9](docs/labs/lab9.md), [lab10](docs/labs/lab10.md).
+Docker / 2-3 компьютерийн заавар: [DOCKER.md](DOCKER.md).
+
+Шинэ lab10 SQLite горим: `npm run build`, дараа нь `npm run start:lab10`.
+Integration test амжилттай бол http://localhost:3001 дээр сервер асна.
+Жинхэнэ нэвтрэлт шаардана; `.env.example`-ийн AUTH_BYPASS=false нь анхны тохиргоо.
+Одоо байгаа Windows SQL Server горимыг `start-teamup.cmd`-аар ажиллуулж болно.
+
+---
+
 # Хамтдаа · TeamUp
+
+## Windows дээрх одоогийн тохиргоо
+
+Энэ компьютер дээр `tontooshko` серверийн `TeamUpDB` санд Windows Authentication-аар холбогдоно.
+`start-teamup.cmd` файлыг нээж ажиллуулна. Дэлгэрэнгүй заавар: `WINDOWS-SETUP.md`.
+Холболтыг зөвхөн шалгах: `npm run db:check`. Одоогийн `.env` нь demo өгөгдөл үүсгэхгүй, нэвтрэлт алгасахгүй.
+
+Доорх SQLite заавар нь `.env.example`-ээс шинээр тохируулах хувилбар юм.
 
 Оюутнуудын стартап хамтын ажиллагааны платформ. Эх шаардлага:
 `/home/tontooshko/Desktop/hugjuulelt/fcsa312_hw/assignment1.pdf`.
@@ -31,7 +52,7 @@ Production дээр `.env`-ийн `APP_URL`-ийг бодит URL болгоно
 
 ## Нэвтрэлтийг түр алгасах
 
-Одоогоор дотоод SQLite горимд нэвтрэлт **түр алгасагдана**. `npm run dev`
+`AUTH_BYPASS=true` гэж тусгайлан тохируулсан дотоод SQLite горимд нэвтрэлт **түр алгасагдана**. `npm run dev`
 ажиллуулаад сайт нээхэд жишээ оюутнаар шууд орно. Гадаад SQL Server холбох
 шаардлагагүй; жишээ өгөгдөл дотоод SQLite-д автоматаар үүснэ.
 
@@ -155,3 +176,4 @@ NFR-үүдийг баталгаажуулаагүй. Хайлт одоогоор
 
 Юзкейсийн дэлгэрэнгүй: [docs/requirements.md](docs/requirements.md).
 # TeamUP
+

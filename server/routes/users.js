@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { profileSchema } from '../validation/profile.js';
 import { searchCache } from '../search-cache.js';
 import { z } from 'zod';
 import { requireUser } from '../auth.js';
@@ -12,26 +13,10 @@ import {
   now,
   parse,
   publicUser,
-  strings,
   text,
 } from '../utils.js';
 import { decorateProjects } from './projects.js';
 
-const profileSchema = z.object({
-  name: text(2, 160),
-  school: text(2, 160),
-  major: text(2, 160),
-  skills: strings,
-  interests: strings,
-  experience: text(0, 3000),
-  portfolio: link,
-  hours: z
-    .number()
-    .int()
-    .min(0)
-    .max(80),
-  bio: text(0, 3000),
-});
 export function userRoutes(db) {
   const router = Router();
   router.use(requireUser);

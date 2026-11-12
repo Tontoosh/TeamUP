@@ -78,7 +78,7 @@ export function projectRoutes(db) {
         p.skills.some(s => s.toLowerCase().includes(String(skill).toLowerCase()))
       );
     if (type) projects = projects.filter(p => p.project_type === type);
-    if (duration) projects = projects.filter(p => p.duration <= Number(duration));
+    if (duration) projects = projects.filter(p => p.duration > 0 && p.duration <= Number(duration));
     if (status) projects = projects.filter(p => p.status === status);
     if (sort === 'spaces')
       projects.sort((a, b) => b.capacity - b.member_count - (a.capacity - a.member_count));
@@ -90,6 +90,15 @@ export function projectRoutes(db) {
       total,
       page,
       pages: Math.ceil(total / size),
+    });
+  });
+  router.get('/options', async (_req, res) => {
+    const projects = await db.all("SELECT * FROM projects WHERE visibility = 'visible'");
+    const unique = values => [...new Set(values.filter(Boolean))].sort();
+    res.json({
+      categories: unique(projects.map(p => p.category)),
+      types: unique(projects.map(p => p.project_type)),
+      skills: unique(projects.flatMap(p => JSON.parse(p.skills))),
     });
   });
   router.get('/:id', async (req, res) => {
@@ -216,3 +225,4 @@ export function projectRoutes(db) {
   });
   return router;
 }
+

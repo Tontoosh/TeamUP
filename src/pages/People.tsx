@@ -13,12 +13,12 @@ export function PersonCard({ user }: { user: User }) {
         <Avatar name={user.name} size="large" />
         <span className="availability">
           <span className="live-dot" />
-          {user.hours} цаг / 7 хоног
+          {user.hours ? user.hours + ' цаг / 7 хоног' : user.availability === 'available' ? 'Хамтран ажиллах боломжтой' : user.availability === 'busy' ? 'Завгүй' : 'Цагийн мэдээлэл оруулаагүй'}
         </span>
       </div>
       <h3>{user.name}</h3>
       <p className="muted">
-        {user.school} · {user.major}
+        {[user.school, user.major].filter(Boolean).join(' · ') || 'Сургалтын мэдээлэл оруулаагүй'}
       </p>
       <p className="card-description">{user.bio || 'Танилцуулга оруулаагүй байна.'}</p>
       <Tags items={user.skills} />
@@ -179,3 +179,4 @@ export function Recommendations() {
     </>
   );
 }
+

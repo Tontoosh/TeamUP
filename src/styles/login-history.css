@@ -1,0 +1,4 @@
+.login-history { min-width: 0; }
+.login-history .space-between, .login-history .member-row { flex-wrap: wrap; }
+.login-history .member-row > * { min-width: 0; overflow-wrap: anywhere; }
+.login-history time { color: var(--muted); font-size: 13px; }
