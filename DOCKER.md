@@ -10,7 +10,7 @@ Windows дээр Docker Desktop-ийн албан ёсны installer:
 https://docs.docker.com/desktop/setup/install/windows-install/
 
 WSL 2 backend болон hardware virtualization шаардлагатай. Энэ компьютер дээр шалгахад
-Docker суулгаагүй, `wsl --status` нь WSL суулгаагүй гэж буцаасан.
+Docker Desktop суусан, WSL сүлжээний adapter байгаа, Desktop дээр Engine running төлөвийг баталсан.
 Administrator PowerShell-д `wsl --install --no-distribution` ажиллуулж, шаардвал restart хийнэ.
 Docker Desktop суулгаж асаагаад `docker version`, `docker compose version` шалгана.
 UAC/BIOS/restart алхмыг компьютерийн эзэмшигч гүйцэтгэнэ.
@@ -61,5 +61,32 @@ student@teamup.mn, owner@teamup.mn, admin@teamup.mn. Нууц үг: Teamup123!
 ## Баталгаажуулалтын хүрээ
 
 Локал Node орчинд integration/full tests болон production build шалгасан.
-Docker daemon байхгүй тул image build, compose healthcheck, LAN-ийн 3 бодит төхөөрөмжийн
-холболтыг одоогоор баталгаажуулаагүй. Docker суусны дараа дээрх командаар шалгана.
+Docker engine ажиллаж байгаа ч Codex sandbox нь Docker named pipe-д permission denied буцааж байна.
+Image build, compose healthcheck, LAN-ийн бодит төхөөрөмжийн холболтыг launcher ажилласны дараа шалгана.
+
+## Энэ компьютерт бэлдсэн тохиргоо
+
+Wi-Fi IPv4: 192.168.1.4. Порт: 3001. Docker project: teamup.
+`.env.docker` нь LAN APP_URL-ийг хадгална; Git/build context-д орохгүй.
+SQLite DB болон uploads нь `teamup_teamup-data` volume дээр хадгалагдана.
+Windows-ийн SQL Server өгөгдлийг контейнер рүү автоматаар импортлохгүй.
+
+Administrator PowerShell дээр нэг удаа:
+
+```powershell
+& "C:\Users\tonto\OneDrive\Desktop\TeamUP-main\TeamUP-main\start-docker.ps1" -ServerIP 192.168.1.4 -ConfigureFirewall
+```
+
+Дараагийн асаалт: `./start-docker.ps1 -ServerIP 192.168.1.4`. Docker project нэрийг
+launcher өөрөө teamup гэж өгнө; compose командыг гараар ашиглахдаа мөн `-p teamup` нэмнэ.
+Launcher нь engine, Compose config, image build, healthy төлөв, контейнер доторх
+API/DB/3-session smoke test болон host health endpoint-ийг шалгана.
+Амжилтын нотолгоо: `work/docker-start-status.json`.
+
+Firewall helper нь зөвхөн Private profile, LocalSubnet, TCP 3001-д дүрэм үүсгэнэ.
+Нийтийн сүлжээний profile-ийг автоматаар солихгүй.
+Локал: http://localhost:3001. Ижил Wi-Fi-ийн бусад компьютер: http://192.168.1.4:3001.
+IP өөрчлөгдвөл launcher-ийг шинэ IP-тай ажиллуулна.
+
+SMTP болон Google OAuth-н жинхэнэ холболтод үйлчилгээний credential тусдаа шаардлагатай.
+Тэдгээрийг тохируулсан/хүргэлт амжилттай болсон гэж үзэхгүй.

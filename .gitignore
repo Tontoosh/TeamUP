@@ -10,3 +10,4 @@ work/
 outputs/
 coverage/
 *.log
+.env.docker
