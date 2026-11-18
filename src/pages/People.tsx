@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowUpRight, Search, Sparkles } from 'lucide-react';
-import { useApi } from '../hooks';
+import { useApi, useDebouncedFilters } from '../hooks';
 import type { Page, Project, User } from '../types';
 import { Avatar, Empty, ErrorState, Loading, PageTitle, Pagination, Tags } from '../components/ui';
 import { ProjectCard } from '../components/ProjectCard';
@@ -33,14 +33,15 @@ export function PersonCard({ user }: { user: User }) {
 }
 export function People() {
   const [params, setParams] = useSearchParams();
-  const { data, error, loading, reload } = useApi<Page<User>>(`/users/people?${params}`);
+  const query = useDebouncedFilters(params, 'q,skill,major,interest,experience,hours');
+  const { data, error, loading, reload } = useApi<Page<User>>(`/users/people?${query}`);
   const update = (key: string, value: string) =>
     setParams(previous => {
       const next = new URLSearchParams(previous);
       value ? next.set(key, value) : next.delete(key);
       if (key !== 'page') next.delete('page');
       return next;
-    });
+    }, { replace: key !== 'page' });
   return (
     <>
       <PageTitle

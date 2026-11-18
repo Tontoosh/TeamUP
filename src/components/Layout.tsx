@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../context';
 import { useApi } from '../hooks';
+import { useMobileMenu } from '../useMobileMenu';
 import { Avatar, Brand } from './ui';
 import { DemoSwitcher } from './DemoSwitcher';
 
@@ -33,20 +34,36 @@ const navigation = [
   ['/chat', 'Багийн чат', MessageSquare],
 ] as const;
 export function Layout() {
-  const { user, logout, demoMode } = useApp();
+  const { user, logout, demoMode, toast } = useApp();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  const { open, setOpen, mobile, sidebar, trigger } = useMobileMenu();
   const [query, setQuery] = useState('');
+  const [loggingOut, setLoggingOut] = useState(false);
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await logout();
+      setOpen(false);
+      navigate('/projects');
+    } catch (error) {
+      toast((error as Error).message, true);
+    } finally {
+      setLoggingOut(false);
+    }
+  };
   const { data } = useApi<{ unread: number }>(
     user ? '/community/notifications?unread=true' : null,
     15000
   );
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#main-content">Үндсэн агуулга руу очих</a>
       {open && (
-        <button className="sidebar-backdrop" aria-label="Цэс хаах" onClick={() => setOpen(false)} />
+        <button className="sidebar-backdrop" tabIndex={-1} aria-label="Цэс хаах" onClick={() => setOpen(false)} />
       )}
-      <aside className={`sidebar ${open ? 'is-open' : ''}`}>
+      <aside ref={sidebar} id="main-navigation" className={`sidebar ${open ? 'is-open' : ''}`}
+        inert={mobile && !open} role={mobile && open ? 'dialog' : undefined}
+        aria-modal={mobile && open ? true : undefined} aria-label="Үндсэн цэс">
         <Brand />
         <button
           className="mobile-close icon-btn"
@@ -56,7 +73,7 @@ export function Layout() {
           <X />
         </button>
         <div className="nav-label">ҮНДСЭН ЦЭС</div>
-        <nav>
+        <nav aria-label="Үндсэн">
           {navigation.map(([path, label, Icon]) => (
             <NavLink key={path} to={path} end onClick={() => setOpen(false)}>
               <Icon size={19} />
@@ -66,7 +83,7 @@ export function Layout() {
           ))}
         </nav>
         <div className="nav-label personal-label">ХУВИЙН ТАНХИМ</div>
-        <nav>
+        <nav aria-label="Хувийн танхим">
           <NavLink to="/notifications" onClick={() => setOpen(false)}>
             <Bell size={19} />
             Мэдэгдэл{!!data?.unread && <span className="count">{data.unread}</span>}
@@ -87,6 +104,11 @@ export function Layout() {
           )}
         </nav>
         <div className="sidebar-bottom">
+          {user && !demoMode && (
+            <button className="btn ghost mobile-logout" disabled={loggingOut} onClick={handleLogout}>
+              <LogOut size={17} />{loggingOut ? 'Гарч байна…' : 'Гарах'}
+            </button>
+          )}
           <div className="community-note">
             <span className="mini-icon">
               <GraduationCap size={21} />
@@ -101,12 +123,15 @@ export function Layout() {
           </span>
         </div>
       </aside>
-      <div className="workspace">
+      <div className="workspace" inert={mobile && open}>
         <header className="topbar">
           <button
             className="mobile-menu icon-btn"
+            ref={trigger}
             onClick={() => setOpen(true)}
             aria-label="Цэс нээх"
+            aria-controls="main-navigation"
+            aria-expanded={open}
           >
             <Menu />
           </button>
@@ -114,7 +139,7 @@ export function Layout() {
             className="global-search"
             onSubmit={event => {
               event.preventDefault();
-              navigate(`/projects?q=${encodeURIComponent(query)}`);
+              navigate(`/projects?q=${encodeURIComponent(query.trim())}`);
             }}
           >
             <Search size={18} />
@@ -129,6 +154,7 @@ export function Layout() {
           <div className="top-actions">
             <Link
               className="btn primary compact"
+              aria-label="Төсөл үүсгэх"
               to={user ? '/projects/new' : '/login?next=/projects/new'}
             >
               <Plus size={18} />
@@ -145,7 +171,7 @@ export function Layout() {
                   {!!data?.unread && <i />}
                 </Link>
                 <div className="topbar-divider" />
-                <Link className="account" to="/profile">
+                <Link className="account" to="/profile" aria-label="Миний профайл">
                   <Avatar name={user.name} />
                   <span>
                     <b>{user.name}</b>
@@ -157,10 +183,8 @@ export function Layout() {
                 {demoMode ? <DemoSwitcher /> : <button
                   className="icon-btn logout"
                   aria-label="Гарах"
-                  onClick={async () => {
-                    await logout();
-                    navigate('/projects');
-                  }}
+                  disabled={loggingOut}
+                  onClick={handleLogout}
                 >
                   <LogOut size={17} />
                 </button>}
@@ -172,7 +196,7 @@ export function Layout() {
             )}
           </div>
         </header>
-        <main className="main-content">
+        <main className="main-content" id="main-content" tabIndex={-1}>
           <Outlet />
         </main>
         <footer className="app-footer">

@@ -1,7 +1,21 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import sql from 'mssql/msnodesqlv8.js';
+import { createRequire } from 'node:module';
 import { bindSqlParameters } from '../server/db/sql-parameters.js';
+
+// Exercise mssql's real ODBC SQL generation without loading a native driver or
+// requiring a system ODBC installation. The connection is stubbed below.
+const require = createRequire(import.meta.url);
+const nativePath = require.resolve('msnodesqlv8');
+const previous = require.cache[nativePath];
+let sql;
+try {
+  require.cache[nativePath] = { id: nativePath, loaded: true, exports: {} };
+  sql = require('mssql/msnodesqlv8.js');
+} finally {
+  if (previous) require.cache[nativePath] = previous;
+  else delete require.cache[nativePath];
+}
 
 test('Windows SQL insert avoids ODBC reserved parameter names and preserves all values', async () => {
   const pool = new sql.ConnectionPool({ server: 'unused', options: {} });

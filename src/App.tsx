@@ -45,7 +45,7 @@ export function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         {(['login', 'register', 'forgot', 'reset', 'verify'] as const).map(mode => (
-          <Route key={mode} path={`/${mode}`} element={<Auth mode={mode} />} />
+          <Route key={mode} path={`/${mode}`} element={<Auth key={mode} mode={mode} />} />
         ))}
         <Route element={<Layout />}>
           <Route path="/projects" element={<Projects />} />

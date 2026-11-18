@@ -18,7 +18,7 @@
   .top-actions {
     gap: 10px;
   }
-  .account span {
+  .account > span:not(.avatar) {
     display: none;
   }
   .filter-grid {

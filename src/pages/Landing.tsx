@@ -4,12 +4,12 @@ import { ArrowUpRight, MessageSquare, Rocket, Sparkles, Users } from 'lucide-rea
 import { useApp } from '../context';
 import { useApi } from '../hooks';
 import type { Page, Project } from '../types';
-import { Brand } from '../components/ui';
+import { Brand, Empty, ErrorState, Loading } from '../components/ui';
 import { ProjectCard } from '../components/ProjectCard';
 
 export function Landing() {
   const { user } = useApp();
-  const { data } = useApi<Page<Project>>('/projects?size=3');
+  const { data, loading, error, reload } = useApi<Page<Project>>('/projects?size=3');
   return (
     <div className="landing">
       <header className="landing-nav">
@@ -51,8 +51,8 @@ export function Landing() {
                 Төсөл хайх
                 <ArrowUpRight size={18} />
               </Link>
-              <Link className="btn secondary" to="/register">
-                Хамтдаа эхлэх
+              <Link className="btn secondary" to={user ? '/projects/new' : '/register'}>
+                {user ? 'Төсөл үүсгэх' : 'Хамтдаа эхлэх'}
               </Link>
             </div>
             <div className="hero-note">
@@ -156,11 +156,16 @@ export function Landing() {
               <ArrowUpRight size={18} />
             </Link>
           </div>
-          <div className="project-grid landing-projects">
-            {data?.items.map(project => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
-          </div>
+          {loading ? <Loading /> : error ? <ErrorState message={error} retry={reload} /> :
+            !data?.items.length ? (
+              <Empty title="Эхний төслийн эзэн болоорой" text="Санаагаа нийтлээд хамт бүтээх багаа бүрдүүлээрэй.">
+                <Link className="btn primary" to={user ? '/projects/new' : '/register'}>Төсөл эхлүүлэх</Link>
+              </Empty>
+            ) : (
+              <div className="project-grid landing-projects">
+                {data.items.map(project => <ProjectCard key={project.id} project={project} />)}
+              </div>
+            )}
         </section>
         <section className="landing-section faq">
           <div>
@@ -199,8 +204,8 @@ export function Landing() {
             <br />
             алхмаа хийе.
           </h2>
-          <Link className="btn primary" to="/register">
-            Хамтдаа нэгдэх
+          <Link className="btn primary" to={user ? '/projects/new' : '/register'}>
+            {user ? 'Санаагаа төсөл болгох' : 'Хамтдаа нэгдэх'}
             <ArrowUpRight size={19} />
           </Link>
         </section>

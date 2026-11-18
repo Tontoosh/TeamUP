@@ -1,7 +1,7 @@
 import { TeamScene } from '../components/TeamScene';
 import { useSearchParams, Link } from 'react-router-dom';
 import { ArrowUpRight, Plus, Search, SlidersHorizontal, Sparkles, X } from 'lucide-react';
-import { useApi } from '../hooks';
+import { useApi, useDebouncedFilters } from '../hooks';
 import { useApp } from '../context';
 import type { Page, Project } from '../types';
 import { ProjectCard } from '../components/ProjectCard';
@@ -11,17 +11,17 @@ export function Projects({ mine = false }: { mine?: boolean }) {
   const [params, setParams] = useSearchParams();
   const { user } = useApp();
   const { data: filterOptions } = useApi<{ categories: string[]; types: string[]; skills: string[] }>('/projects/options');
-  const query = new URLSearchParams(params);
+  const query = useDebouncedFilters(params, 'q,skill');
   if (mine) query.set('mine', 'true');
   const { data, loading, error, reload } = useApi<Page<Project>>(`/projects?${query}`);
-  const update = (key: string, value: string) => {
+  const update = (key: string, value: string, replace = false) => {
     setParams(previous => {
       const next = new URLSearchParams(previous);
       if (value) next.set(key, value);
       else next.delete(key);
       if (key !== 'page') next.delete('page');
       return next;
-    });
+    }, { replace });
   };
   return (
     <>
@@ -78,7 +78,7 @@ export function Projects({ mine = false }: { mine?: boolean }) {
               aria-label="Төслийн нэр"
               placeholder="Төслийн нэр, түлхүүр үг…"
               value={params.get('q') || ''}
-              onChange={event => update('q', event.target.value)}
+              onChange={event => update('q', event.target.value, true)}
             />
           </label>
           <select
@@ -95,7 +95,7 @@ export function Projects({ mine = false }: { mine?: boolean }) {
             aria-label="Ур чадвар"
             placeholder="Ур чадвар · React, Figma…"
             value={params.get('skill') || ''}
-            onChange={event => update('skill', event.target.value)}
+            onChange={event => update('skill', event.target.value, true)}
           />
           <select
             aria-label="Төслийн төрөл"
@@ -122,6 +122,7 @@ export function Projects({ mine = false }: { mine?: boolean }) {
             <button
               key={skill}
               className={`filter-chip ${params.get('skill') === skill ? 'selected' : ''}`}
+              aria-pressed={params.get('skill') === skill}
               onClick={() => update('skill', params.get('skill') === skill ? '' : skill)}
             >
               {skill}

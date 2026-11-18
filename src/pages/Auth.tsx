@@ -176,7 +176,8 @@ export function Auth({ mode }: { mode: 'login' | 'register' | 'forgot' | 'reset'
                       />
                       <button
                         type="button"
-                        aria-label="Нууц үг харах"
+                        aria-label={visible ? 'Нууц үг нуух' : 'Нууц үг харах'}
+                        aria-pressed={visible}
                         onClick={() => setVisible(!visible)}
                       >
                         {visible ? <EyeOff size={18} /> : <Eye size={18} />}
