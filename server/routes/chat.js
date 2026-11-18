@@ -39,7 +39,7 @@ export function chatRoutes(db) {
     async (req, res, next) => {
       try {
         const project = await projectAccess(db, req.params.projectId, req.user);
-        check(project.status !== 'archived', 'Архивласан чат зөвхөн унших горимтой.');
+        check(!['archived', 'completed'].includes(project.status), 'Дууссан эсвэл архивласан чат зөвхөн унших горимтой.');
         next();
       } catch (error) {
         next(error);
@@ -61,7 +61,7 @@ export function chatRoutes(db) {
         };
         await db.transaction(async () => {
           const project = await projectAccess(db, req.params.projectId, req.user);
-          check(project.status !== 'archived', 'Архивласан чат зөвхөн унших горимтой.');
+        check(!['archived', 'completed'].includes(project.status), 'Дууссан эсвэл архивласан чат зөвхөн унших горимтой.');
           await db.insert('messages', message);
           if (req.file)
             await db.insert('attachments', {

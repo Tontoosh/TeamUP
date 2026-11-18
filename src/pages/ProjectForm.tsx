@@ -7,12 +7,17 @@ import { useApp } from '../context';
 import { useApi } from '../hooks';
 import type { Project } from '../types';
 import { ErrorState, Loading, PageTitle } from '../components/ui';
+import { RoleRequirementsEditor } from '../components/RoleRequirements';
+import { uniqueSkills } from '../skill-utils';
 
 function Editor({ project }: { project?: Project }) {
   const { toast } = useApp();
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [skillsText, setSkillsText] = useState(project?.skills.join(', ') || '');
+  const [rolesText, setRolesText] = useState(project?.roles.join(', ') || '');
+  const [hours, setHours] = useState(String(project?.hours || 8));
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setBusy(true);
@@ -20,7 +25,8 @@ function Editor({ project }: { project?: Project }) {
     const form = Object.fromEntries(new FormData(event.currentTarget));
     const data = {
       ...form,
-      skills: splitList(String(form.skills)),
+      skills: uniqueSkills(String(form.skills)),
+      roleRequirements: JSON.parse(String(form.roleRequirements)),
       roles: splitList(String(form.roles)),
       capacity: Number(form.capacity),
       hours: Number(form.hours),
@@ -133,7 +139,8 @@ function Editor({ project }: { project?: Project }) {
               type="number"
               min={1}
               max={80}
-              defaultValue={project?.hours || 8}
+              value={hours}
+              onChange={event => setHours(event.target.value)}
               required
             />
           </label>
@@ -142,7 +149,9 @@ function Editor({ project }: { project?: Project }) {
           Шаардлагатай ур чадвар
           <input
             name="skills"
-            defaultValue={project?.skills.join(', ')}
+            aria-label="Шаардлагатай ур чадвар"
+            value={skillsText}
+            onChange={event => setSkillsText(event.target.value)}
             placeholder="React, Figma, TypeScript"
             required
           />
@@ -152,12 +161,16 @@ function Editor({ project }: { project?: Project }) {
           Нээлттэй үүргүүд
           <input
             name="roles"
-            defaultValue={project?.roles.join(', ')}
+            aria-label="Нээлттэй үүргүүд"
+            value={rolesText}
+            onChange={event => setRolesText(event.target.value)}
             placeholder="Frontend хөгжүүлэгч, UI/UX дизайнер"
             required
           />
           <small>Нэг үүрэг бүр нэг сул орон тоог илэрхийлнэ.</small>
         </label>
+        <RoleRequirementsEditor roles={splitList(rolesText)} skills={uniqueSkills(skillsText)}
+          hours={Number(hours) || 8} initial={project?.roleRequirements} />
         {error && <ErrorState message={error} />}
         <div className="form-actions">
           <Link className="btn secondary" to={project ? `/projects/${project.id}` : '/my-projects'}>
@@ -187,7 +200,7 @@ export function ProjectForm() {
   const { data, error, loading } = useApi<Project>(id ? `/projects/${id}` : null);
   if (id && loading) return <Loading />;
   if (error) return <ErrorState message={error} />;
-  if (data && (data.owner_id !== user?.id || data.status === 'archived'))
+  if (data && (data.owner_id !== user?.id || ['archived', 'completed'].includes(data.status)))
     return <ErrorState message="Энэ төслийг засах эрхгүй." />;
   return (
     <>
@@ -196,7 +209,7 @@ export function ProjectForm() {
         title={id ? 'Төсөл засах' : 'Шинэ төсөл эхлүүлэх'}
         description="Санаагаа танилцуулаад, зөв хүмүүсээ олоорой."
       />
-      <Editor project={data || undefined} />
+      <Editor key={data?.id || 'new'} project={data || undefined} />
     </>
   );
 }

@@ -9,6 +9,7 @@ import type { Member, Project } from '../types';
 import { Avatar, Badge, ErrorState, Loading, Modal, Tags } from '../components/ui';
 import { JoinPanel } from '../components/JoinPanel';
 import { ReportDialog } from '../components/ReportDialog';
+import { RoleRequirements } from '../components/RoleRequirements';
 
 export function ProjectDetail() {
   const { id } = useParams();
@@ -107,6 +108,11 @@ export function ProjectDetail() {
             </div>
             <h3>Шаардлагатай ур чадвар</h3>
             <Tags items={project.skills} />
+            <h3>Нээлттэй үүргүүдийн шаардлага</h3>
+            <RoleRequirements roles={project.roleRequirements} />
+            {owner && project.status === 'open' && <Link className="btn secondary" to={`/people?project=${id}`}>
+              Тохирох хамтрагч хайх
+            </Link>}
           </section>
           <section className="panel">
             <h2>
@@ -126,7 +132,10 @@ export function ProjectDetail() {
                       <small>{item.role}</small>
                     </span>
                   </Link>
-                  {owner && item.user_id !== user?.id && project.status !== 'archived' && (
+                  {inTeam && project.completed_at && item.user_id !== user?.id && (
+                    <Link className="text-btn" to={`/people/${item.user_id}?reviewProject=${id}`}>Үнэлгээ өгөх</Link>
+                  )}
+                  {owner && item.user_id !== user?.id && !['archived', 'completed'].includes(project.status) && (
                     <button
                       className="text-btn"
                       onClick={() => {
@@ -145,12 +154,15 @@ export function ProjectDetail() {
             <section className="panel owner-tools">
               <h2>Төслийн удирдлага</h2>
               <div className="inline wrap">
+                {project.status === 'open' && project.member_count < project.capacity && project.roles.length > 0 && (
+                  <Link className="btn primary" to={`/people?project=${project.id}`}>Тохирох хамтрагч олох</Link>
+                )}
                 {project.status !== 'archived' && (
                   <>
-                    <Link className="btn secondary" to={`/projects/${id}/edit`}>
+                    {project.status !== 'completed' && <Link className="btn secondary" to={`/projects/${id}/edit`}>
                       <Pencil size={16} />
                       Мэдээлэл засах
-                    </Link>
+                    </Link>}
                     <Link to="/requests?tab=incoming" className="btn secondary">
                       Ирсэн хүсэлтүүд
                     </Link>
@@ -158,6 +170,9 @@ export function ProjectDetail() {
                       <button className="btn secondary" onClick={() => setConfirm('closed')}>
                         Элсэлт хаах
                       </button>
+                    )}
+                    {['open', 'closed'].includes(project.status) && (
+                      <button className="btn secondary" onClick={() => setConfirm('completed')}>Төсөл дуусгах</button>
                     )}
                     <button className="btn danger" onClick={() => setConfirm('archived')}>
                       Архивлах
@@ -210,13 +225,14 @@ export function ProjectDetail() {
       )}
       {confirm && (
         <Modal
-          title={confirm === 'closed' ? 'Элсэлт хаах уу?' : 'Төсөл архивлах уу?'}
+          title={confirm === 'closed' ? 'Элсэлт хаах уу?' : confirm === 'completed' ? 'Төслийн ажил дууссан уу?' : 'Төсөл архивлах уу?'}
           close={() => setConfirm('')}
         >
           <p className="muted">
             Шийдвэрлэгдээгүй хүсэлтүүд хүчингүй болж, түүх хадгалагдана.{' '}
             {confirm === 'archived' && 'Төсөл болон багийн чат зөвхөн унших горимд шилжинэ.'} Энэ
             үйлдлийг буцаахгүй.
+            {confirm === 'completed' && ' Одоогийн багийн бүрэлдэхүүн хадгалагдаж, гишүүд бие биедээ үнэлгээ өгөх боломжтой болно. Төсөл болон чат зөвхөн унших горимд шилжинэ.'}
           </p>
           <div className="form-actions">
             <button className="btn secondary" onClick={() => setConfirm('')}>

@@ -16,7 +16,7 @@ export function installSourceWrites(db) {
       if ('status' in values) {
         const checks = await db.all("SELECT definition FROM sys.check_constraints WHERE parent_object_id=OBJECT_ID(N'dbo.Project') AND definition LIKE '%status%'");
         const allowed = checks.flatMap(c => [...c.definition.matchAll(/'([^']+)'/g)].map(m => m[1]));
-        const candidates = values.status === 'open' ? ['recruiting','open'] : values.status === 'archived' ? ['archived','cancelled','completed','closed'] : ['closed','completed','paused'];
+        const candidates = values.status === 'open' ? ['recruiting','open'] : values.status === 'completed' ? ['completed','closed'] : values.status === 'archived' ? ['archived','cancelled','completed','closed'] : ['closed','completed','paused'];
         const status = candidates.find(s => allowed.includes(s));
         if (status) fields.status = status;
         // If the source has no matching lifecycle state, the app status is an overlay.

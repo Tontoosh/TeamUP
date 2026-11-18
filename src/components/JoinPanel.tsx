@@ -30,7 +30,7 @@ export function JoinPanel({
         </b>
       </div>
       <hr />
-      <h3>Нээлттэй үүргүүд</h3>
+      <h3>{project.status === 'open' ? 'Нээлттэй үүргүүд' : 'Төслийн үүргүүд'}</h3>
       {project.roles.map(role => (
         <div className="role-item" key={role}>
           <span className="live-dot" />

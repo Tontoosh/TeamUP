@@ -5,6 +5,9 @@ export interface User {
   school: string;
   major: string;
   skills: string[];
+  skillLevels?: SkillLevel[];
+  reputation?: Reputation;
+  match?: Match;
   interests: string[];
   experience: string;
   portfolio: string;
@@ -30,6 +33,9 @@ export interface Project {
   capacity: number;
   skills: string[];
   roles: string[];
+  roleRequirements?: RoleRequirement[];
+  completed_at?: string | null;
+  match?: Match;
   hours: number;
   availability?: string;
   status: string;
@@ -109,5 +115,24 @@ export interface Page<T> {
   total: number;
   pages: number;
   page: number;
+}
+
+export interface SkillLevel { skill: string; level: number }
+export interface SkillRequirement { skill: string; minLevel: number; weight: number; required: boolean }
+export interface RoleRequirement {
+  role: string; hours: number; hoursRequired: boolean; configured?: boolean; skills: SkillRequirement[];
+}
+export interface Reputation {
+  count: number; reviewers: number; average: number | null; adjusted: number; confidence: number;
+  dimensions: { quality: number | null; reliability: number | null; communication: number | null };
+}
+export interface Match {
+  score: number; role: string; projectId: string; projectName: string; reasons: string[];
+  breakdown: { skills: number; availability: number; interest: number; reputation: number };
+  ungradedSkills: number;
+}
+export interface PeerReview {
+  id: string; project_id: string; author_id: string; author_name: string; project_name: string;
+  target_role: string; quality: number; reliability: number; communication: number; comment: string; created_at: string;
 }
 

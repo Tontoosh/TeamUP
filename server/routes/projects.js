@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import { searchCache } from '../search-cache.js';
 import { z } from 'zod';
+import { roleRequirementsSchema } from '../validation/matching.js';
+import { loadRoleMatching, matchingProject, saveRoleRequirements } from '../matching/store.js';
+import { skillKey } from '../matching/algorithm.js';
 import { requireUser } from '../auth.js';
 import {
   check,
@@ -32,8 +35,9 @@ const projectSchema = z.object({
     .int()
     .min(2)
     .max(100),
-  skills: strings.min(1),
-  roles: strings,
+  skills: strings.min(1).refine(items => new Set(items.map(skillKey)).size === items.length),
+  roles: strings.refine(items => new Set(items.map(item => item.toLowerCase())).size === items.length),
+  roleRequirements: roleRequirementsSchema.optional(),
   hours: z
     .number()
     .int()
@@ -43,8 +47,9 @@ const projectSchema = z.object({
 export async function decorateProjects(db, projects) {
   const users = await db.all('SELECT * FROM users');
   const memberships = await db.all('SELECT * FROM memberships');
+  const matching = await loadRoleMatching(db);
   return projects.map(row => ({
-    ...decode(row),
+    ...matchingProject(row, matching),
     owner: publicUser(users.find(user => user.id === row.owner_id)),
     member_count: memberships.filter(member => member.project_id === row.id).length,
   }));
@@ -123,7 +128,7 @@ export function projectRoutes(db) {
     res.json(project);
   });
   router.post('/', requireUser, async (req, res) => {
-    const data = parse(projectSchema.extend({ roles: strings.min(1) }), req.body);
+    const { roleRequirements, ...data } = parse(projectSchema.refine(data => data.roles.length > 0), req.body);
     const project = {
       ...data,
       id: id(),
@@ -136,6 +141,7 @@ export function projectRoutes(db) {
     };
     await db.transaction(async () => {
       await db.insert('projects', project);
+      await saveRoleRequirements(db, { ...data, id: project.id }, roleRequirements);
       await db.insert('memberships', {
         id: id(),
         project_id: project.id,
@@ -147,10 +153,10 @@ export function projectRoutes(db) {
     res.status(201).json(decode(project));
   });
   router.patch('/:id', requireUser, async (req, res) => {
-    const data = parse(projectSchema, req.body);
+    const { roleRequirements, ...data } = parse(projectSchema, req.body);
     await db.transaction(async () => {
       const project = await projectAccess(db, req.params.id, req.user, true);
-      check(project.status !== 'archived', 'Архивласан төслийг засахгүй.');
+      check(!['archived', 'completed'].includes(project.status), 'Дууссан эсвэл архивласан төслийг засахгүй.');
       const members = await db.all('SELECT id FROM memberships WHERE project_id = ?', [project.id]);
       check(data.capacity >= members.length, 'Багийн хэмжээ гишүүдийн тооноос бага байж болохгүй.');
       await db.update('projects', project.id, {
@@ -158,6 +164,7 @@ export function projectRoutes(db) {
         skills: JSON.stringify(data.skills),
         roles: JSON.stringify([...new Set(data.roles)]),
       });
+      await saveRoleRequirements(db, { ...data, id: project.id }, roleRequirements);
       await notifyTeam(
         db,
         project.id,
@@ -169,14 +176,24 @@ export function projectRoutes(db) {
     res.json({ ok: true });
   });
   router.post('/:id/status', requireUser, async (req, res) => {
-    const { status } = parse(z.object({ status: z.enum(['closed', 'archived']) }), req.body);
+    const { status } = parse(z.object({ status: z.enum(['closed', 'completed', 'archived']) }), req.body);
     await db.transaction(async () => {
       const project = await projectAccess(db, req.params.id, req.user, true);
       check(
-        project.status !== 'archived' && (status === 'archived' || project.status === 'open'),
+        project.status !== 'archived' && (status === 'archived' ||
+          (status === 'completed' && ['open', 'closed'].includes(project.status)) ||
+          (status === 'closed' && project.status === 'open')),
         'Төлөв өөрчлөх боломжгүй.'
       );
       await db.update('projects', project.id, { status });
+      if (status === 'completed') {
+        await db.insert('project_completions', { id: project.id, completed_at: now() });
+        for (const member of await db.all('SELECT * FROM memberships WHERE project_id = ?', [project.id])) {
+          await db.insert('completion_members', {
+            id: id(), project_id: project.id, user_id: member.user_id, role: member.role,
+          });
+        }
+      }
       for (const request of await db.all(
         "SELECT * FROM applications WHERE project_id = ? AND status IN ('pending','info')",
         [project.id]
@@ -196,7 +213,7 @@ export function projectRoutes(db) {
         db,
         project.id,
         req.user.id,
-        `${project.name}: ${status === 'archived' ? 'архивлагдлаа' : 'элсэлт хаагдлаа'}.`,
+        `${project.name}: ${status === 'archived' ? 'архивлагдлаа' : status === 'completed' ? 'ажил дуусаж, багийн үнэлгээ нээгдлээ' : 'элсэлт хаагдлаа'}.`,
         `/projects/${project.id}`
       );
     });
@@ -206,7 +223,7 @@ export function projectRoutes(db) {
     const { role } = parse(z.object({ role: text(1, 100) }), req.body);
     await db.transaction(async () => {
       const project = await projectAccess(db, req.params.id, req.user, true);
-      check(project.status !== 'archived', 'Архивласан багийн үүргийг өөрчлөхгүй.');
+      check(!['archived', 'completed'].includes(project.status), 'Дууссан эсвэл архивласан багийн үүргийг өөрчлөхгүй.');
       check(req.params.userId !== project.owner_id, 'Эзэмшигчийн үүргийг өөрчлөхгүй.');
       const member = await db.get(
         'SELECT * FROM memberships WHERE project_id = ? AND user_id = ?',

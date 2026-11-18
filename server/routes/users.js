@@ -16,61 +16,20 @@ import {
   text,
 } from '../utils.js';
 import { decorateProjects } from './projects.js';
+import { bestMatch } from '../matching/algorithm.js';
+import { loadUserMatching, matchingUser, saveSkillLevels } from '../matching/store.js';
+import { matchOrder, recommendationsFor } from '../matching/recommendations.js';
 
 export function userRoutes(db) {
   const router = Router();
   router.use(requireUser);
   router.get('/recommendations', async (req, res) => {
-    const user = decode(req.user);
-    const projects = await decorateProjects(
-      db,
-      await db.all("SELECT * FROM projects WHERE status = 'open' AND visibility = 'visible'")
-    );
-    const memberships = await db.all('SELECT * FROM memberships WHERE user_id = ?', [user.id]);
-    const ranked = [];
-    for (const project of projects) {
-      if (
-        project.owner_id === user.id ||
-        memberships.some(m => m.project_id === project.id) ||
-        (await isBlocked(db, user.id, project.owner_id))
-      )
-        continue;
-      const shared = project.skills.filter(skill => user.skills.includes(skill));
-      const interest = user.interests.includes(project.category);
-      if (
-        (shared.length || interest) &&
-        user.hours >= project.hours &&
-        project.member_count < project.capacity
-      )
-        ranked.push({
-          ...project,
-          reasons: [
-            ...shared,
-            ...(interest ? [project.category] : []),
-            `${project.hours} цаг / 7 хоног`,
-          ],
-          score: shared.length * 2 + Number(interest),
-        });
-    }
-    const people = [];
-    const ownProjects = projects.filter(project => project.owner_id === user.id);
-    for (const row of await db.all(
-      "SELECT * FROM users WHERE status = 'active' AND role = 'student'"
-    )) {
-      if (row.id === user.id || (await isBlocked(db, user.id, row.id))) continue;
-      const candidate = publicUser(row);
-      const shared = candidate.skills.filter(skill =>
-        ownProjects.some(
-          project => project.skills.includes(skill) && candidate.hours >= project.hours
-        )
-      );
-      if (shared.length) people.push({ ...candidate, reasons: shared });
-    }
-    res.json({
-      projects: ranked.sort((a, b) => b.score - a.score),
-      people,
-      incomplete: !user.skills.length || !user.hours,
-    });
+    res.json(await recommendationsFor(db, req.user));
+  });
+  router.get('/owned-projects', async (req, res) => {
+    const projects = await decorateProjects(db, await db.all(
+      "SELECT * FROM projects WHERE owner_id = ? AND status = 'open' AND visibility = 'visible' ORDER BY created_at DESC", [req.user.id]));
+    res.json(projects.filter(project => project.member_count < project.capacity && project.roles.length));
   });
   router.get('/people', searchCache(db), async (req, res) => {
     check(
@@ -78,8 +37,9 @@ export function userRoutes(db) {
       'Хамтрагч хайхын тулд эхлээд төсөл нийтэлнэ үү.',
       403
     );
+    const matching = await loadUserMatching(db);
     let users = (await db.all("SELECT * FROM users WHERE status = 'active' AND role = 'student'"))
-      .map(publicUser)
+      .map(row => matchingUser(row, matching))
       .filter(user => user.id !== req.user.id);
     const { q, skill, major, interest, hours, experience } = req.query;
     if (q)
@@ -100,21 +60,38 @@ export function userRoutes(db) {
     if (experience) users = users.filter(u => u.experience.includes(String(experience)));
     const visible = [];
     for (const user of users) if (!(await isBlocked(db, req.user.id, user.id))) visible.push(user);
-    const page = Math.max(1, Number(req.query.page) || 1);
+    let ranked = visible;
+    if (req.query.project) {
+      const row = await db.get("SELECT * FROM projects WHERE id = ? AND visibility = 'visible'", [String(req.query.project)]);
+      check(row?.owner_id === req.user.id, 'Өөрийн төслийг сонгоно уу.', 403);
+      const [project] = await decorateProjects(db, [row]);
+      check(project.status === 'open' && project.member_count < project.capacity, 'Төслийн элсэлт нээлттэй байх ёстой.');
+      const roles = project.roleRequirements.filter(role => !req.query.role || role.role === req.query.role);
+      check(roles.length, 'Нээлттэй үүрэг олдсонгүй.', 404);
+      const members = await db.all('SELECT user_id FROM memberships WHERE project_id = ?', [project.id]);
+      ranked = visible.flatMap(user => {
+        if (members.some(item => item.user_id === user.id)) return [];
+        const match = bestMatch(user, project, roles);
+        return match ? [{ ...user, match, reasons: match.reasons }] : [];
+      }).sort(matchOrder);
+    }
+    const page = Math.max(1, Math.floor(Number(req.query.page) || 1));
     res.json({
-      items: visible.slice((page - 1) * 12, page * 12),
-      total: visible.length,
-      pages: Math.ceil(visible.length / 12),
+      items: ranked.slice((page - 1) * 12, page * 12), page,
+      total: ranked.length,
+      pages: Math.ceil(ranked.length / 12),
     });
   });
   router.patch('/me', async (req, res) => {
-    const data = parse(profileSchema, req.body);
-    await db.update('users', req.user.id, {
-      ...data,
-      skills: JSON.stringify(data.skills),
-      interests: JSON.stringify(data.interests),
+    const { skillLevels, ...data } = parse(profileSchema, req.body);
+    await db.transaction(async () => {
+      await db.update('users', req.user.id, {
+        ...data, skills: JSON.stringify(data.skills), interests: JSON.stringify(data.interests),
+      });
+      await saveSkillLevels(db, req.user.id, data.skills, skillLevels);
     });
-    res.json(currentUser(await db.get('SELECT * FROM users WHERE id = ?', [req.user.id])));
+    const row = await db.get('SELECT * FROM users WHERE id = ?', [req.user.id]);
+    res.json({ ...currentUser(row), ...matchingUser(row, await loadUserMatching(db, row.id)), email: row.email });
   });
   router.get('/me/portfolio', async (req, res) =>
     res.json(
@@ -176,7 +153,7 @@ export function userRoutes(db) {
       )
     );
     res.json({
-      ...publicUser(user),
+      ...matchingUser(user, await loadUserMatching(db, user.id)),
       projects,
       portfolioEntries: await db.all('SELECT * FROM portfolios WHERE user_id = ?', [user.id]),
       blocked: !!(await db.get('SELECT id FROM blocks WHERE user_id = ? AND target_id = ?', [

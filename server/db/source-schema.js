@@ -23,7 +23,7 @@ export const sourceViews = {
     CASE WHEN p.project_id IS NULL THEN a.capacity ELSE COALESCE((SELECT SUM(required_count) FROM dbo.ProjectRole WHERE project_id=p.project_id),0)+CASE WHEN EXISTS (SELECT 1 FROM dbo.Membership om WHERE om.project_id=p.project_id AND om.user_id=p.owner_user_id AND om.member_status='active') THEN 0 ELSE 1 END END AS capacity,
     CASE WHEN p.project_id IS NULL THEN a.skills ELSE ${jsonList('dbo.RoleSkill rs JOIN dbo.ProjectRole r ON r.project_role_id=rs.project_role_id JOIN dbo.Skill s ON s.skill_id=rs.skill_id', 's.name', 'r.project_id=p.project_id')} END AS skills,
     CASE WHEN p.project_id IS NULL THEN a.roles ELSE ${jsonList('dbo.ProjectRole r', 'r.role_name', "r.project_id=p.project_id AND r.status='open'")} END AS roles,
-    a.hours, CASE WHEN a.status IN ('closed','archived') THEN a.status WHEN p.project_id IS NULL THEN a.status WHEN p.status='recruiting' THEN 'open' WHEN p.status IN ('archived','cancelled') THEN 'archived' ELSE 'closed' END AS status,
+    a.hours, CASE WHEN a.status IN ('closed','completed','archived') THEN a.status WHEN p.project_id IS NULL THEN a.status WHEN p.status='recruiting' THEN 'open' WHEN p.status IN ('archived','cancelled') THEN 'archived' ELSE 'closed' END AS status,
     a.visibility,a.created_at
     FROM dbo.projects a LEFT JOIN dbo.Project p ON a.id=${projectId('p.project_id')}
     LEFT JOIN dbo.[User] ou ON ou.user_id=p.owner_user_id

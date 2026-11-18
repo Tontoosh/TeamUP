@@ -166,9 +166,9 @@ export function Chat() {
                   )}
                   <div ref={bottom} />
                 </div>
-                {data?.project.status === 'archived' ? (
+                {['archived', 'completed'].includes(data?.project.status || '') ? (
                   <div className="info-banner">
-                    Энэ төсөл архивлагдсан. Чат зөвхөн унших горимтой.
+                    Энэ төсөл дууссан эсвэл архивлагдсан. Чат зөвхөн унших горимтой.
                   </div>
                 ) : (
                   <form className="chat-composer" onSubmit={submit}>

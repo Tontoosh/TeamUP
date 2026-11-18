@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 export const statusLabels: Record<string, string> = {
   open: 'Нээлттэй',
   closed: 'Хаалттай',
+  completed: 'Ажил дууссан',
   archived: 'Архивласан',
   pending: 'Хүлээгдэж буй',
   info: 'Нэмэлт мэдээлэл',

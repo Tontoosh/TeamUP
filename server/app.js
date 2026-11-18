@@ -7,6 +7,7 @@ import { authRoutes } from './routes/auth.js';
 import { projectRoutes } from './routes/projects.js';
 import { applicationRoutes } from './routes/applications.js';
 import { userRoutes } from './routes/users.js';
+import { reviewRoutes } from './routes/reviews.js';
 import { chatRoutes } from './routes/chat.js';
 import { communityRoutes } from './routes/community.js';
 import { adminRoutes } from './routes/admin.js';
@@ -71,6 +72,7 @@ export function createApp(db, { authBypass = false } = {}) {
   app.use('/api/projects', projectRoutes(db));
   app.use('/api/applications', applicationRoutes(db));
   app.use('/api/users', userRoutes(db));
+  app.use('/api/reviews', reviewRoutes(db));
   app.use('/api/chat', chatRoutes(db));
   app.use('/api/community', communityRoutes(db));
   app.use('/api/admin', adminRoutes(db));

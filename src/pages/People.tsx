@@ -5,6 +5,8 @@ import { useApi, useDebouncedFilters } from '../hooks';
 import type { Page, Project, User } from '../types';
 import { Avatar, Empty, ErrorState, Loading, PageTitle, Pagination, Tags } from '../components/ui';
 import { ProjectCard } from '../components/ProjectCard';
+import { MatchSummary, RatingSummary } from '../components/MatchSummary';
+import { SkillLevels } from '../components/SkillLevels';
 
 export function PersonCard({ user }: { user: User }) {
   return (
@@ -21,8 +23,10 @@ export function PersonCard({ user }: { user: User }) {
         {[user.school, user.major].filter(Boolean).join(' · ') || 'Сургалтын мэдээлэл оруулаагүй'}
       </p>
       <p className="card-description">{user.bio || 'Танилцуулга оруулаагүй байна.'}</p>
-      <Tags items={user.skills} />
-      {user.reasons && (
+      <SkillLevels skills={user.skills} levels={user.skillLevels} />
+      <RatingSummary reputation={user.reputation} />
+      <MatchSummary match={user.match} />
+      {!user.match && user.reasons && (
         <p className="match-reason">✧ Төслийн шаардлагад нийцэх: {user.reasons.join(', ')}</p>
       )}
       <Link className="text-btn" to={`/people/${user.id}`}>
@@ -33,6 +37,8 @@ export function PersonCard({ user }: { user: User }) {
 }
 export function People() {
   const [params, setParams] = useSearchParams();
+  const { data: ownProjects } = useApi<Project[]>('/users/owned-projects');
+  const selectedProject = ownProjects?.find(project => project.id === params.get('project'));
   const query = useDebouncedFilters(params, 'q,skill,major,interest,experience,hours');
   const { data, error, loading, reload } = useApi<Page<User>>(`/users/people?${query}`);
   const update = (key: string, value: string) =>
@@ -40,6 +46,7 @@ export function People() {
       const next = new URLSearchParams(previous);
       value ? next.set(key, value) : next.delete(key);
       if (key !== 'page') next.delete('page');
+      if (key === 'project') next.delete('role');
       return next;
     }, { replace: key !== 'page' });
   return (
@@ -49,6 +56,21 @@ export function People() {
         title="Хамтрагч хайх"
         description="Төсөлдөө тохирох ур чадвартай оюутнуудтай танилцаарай."
       />
+      <div className="panel matching-context">
+        <label>Төсөлдөө тохирох хүн олох
+          <select value={params.get('project') || ''} onChange={event => update('project', event.target.value)}>
+            <option value="">Бүх хамтрагчийг үзэх</option>
+            {(ownProjects || []).map(project => <option key={project.id} value={project.id}>{project.name}</option>)}
+          </select>
+        </label>
+        {params.get('project') && <label>Нээлттэй үүрэг
+          <select value={params.get('role') || ''} onChange={event => update('role', event.target.value)}>
+            <option value="">Хамгийн сайн тохирох үүргээр</option>
+            {(selectedProject?.roles || []).map(role => <option key={role}>{role}</option>)}
+          </select>
+        </label>}
+        <p className="helper">Төсөл сонговол ур чадвар 60, цаг 20, сонирхол 10, хамтын ажиллагааны үнэлгээ 10 оноогоор эрэмбэлнэ.</p>
+      </div>
       <div className="panel people-filters">
         <label className="search-field">
           <Search size={18} />
@@ -141,7 +163,7 @@ export function Recommendations() {
             <div className="info-banner">
               <Sparkles size={20} />
               <span>
-                Саналыг сайжруулахын тулд ур чадвар болон боломжит цагаа профайлдаа нэмээрэй.
+                Саналыг сайжруулахын тулд ур чадварын түвшин болон боломжит цагаа профайлдаа нэмээрэй.
               </span>
               <Link to="/profile">Профайл засах ↗</Link>
             </div>

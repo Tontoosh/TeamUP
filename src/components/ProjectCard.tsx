@@ -2,6 +2,7 @@ import { ArrowUpRight, Clock3, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { Project } from '../types';
 import { Avatar, Badge, Tags } from './ui';
+import { MatchSummary } from './MatchSummary';
 
 export function ProjectCard({ project }: { project: Project }) {
   const free = Math.max(0, project.capacity - project.member_count);
@@ -19,7 +20,8 @@ export function ProjectCard({ project }: { project: Project }) {
       </Link>
       <p className="card-description">{project.description}</p>
       <Tags items={project.skills} />
-      {project.reasons && (
+      <MatchSummary match={project.match} />
+      {!project.match && project.reasons && (
         <p className="match-reason">✧ Тохирох зүйлс: {project.reasons.join(', ')}</p>
       )}
       <div className="team-progress">

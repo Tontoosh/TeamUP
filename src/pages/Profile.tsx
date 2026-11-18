@@ -10,6 +10,9 @@ import { Avatar, ErrorState, Loading, Modal, PageTitle, Tags, Empty } from '../c
 import { ProjectCard } from '../components/ProjectCard';
 import { PortfolioList } from '../components/PortfolioList';
 import { ReportDialog } from '../components/ReportDialog';
+import { SkillLevels, SkillLevelsEditor } from '../components/SkillLevels';
+import { ProfileReviews } from '../components/ProfileReviews';
+import { uniqueSkills } from '../skill-utils';
 
 export function Profile() {
   const { id } = useParams();
@@ -29,7 +32,8 @@ export function Profile() {
     try {
       await patch('/users/me', {
         ...data,
-        skills: splitList(String(data.skills)),
+        skills: uniqueSkills(String(data.skills)),
+        skillLevels: JSON.parse(String(data.skillLevels)),
         interests: splitList(String(data.interests)),
         hours: Number(data.hours),
       });
@@ -111,7 +115,7 @@ export function Profile() {
           <h2>Миний тухай</h2>
           <p className="muted preserve-text">{user.bio || 'Танилцуулга оруулаагүй байна.'}</p>
           <h3>Ур чадвар</h3>
-          <Tags items={user.skills} />
+          <SkillLevels skills={user.skills} levels={user.skillLevels} />
           <h3>Сонирхол</h3>
           <Tags items={user.interests} />
           <h3>Туршлага</h3>
@@ -121,6 +125,7 @@ export function Profile() {
           <PortfolioList entries={user.portfolioEntries || []} own={own} reload={reload} />
         </section>
       </div>
+      <ProfileReviews key={user.id} userId={user.id} own={own} />
       <div className="results-heading">
         <h2>
           Хамтын ажиллагааны түүх <span>{user.projects?.length || 0}</span>
@@ -171,14 +176,7 @@ export function Profile() {
               Танилцуулга
               <textarea name="bio" defaultValue={user.bio} rows={3} maxLength={3000} />
             </label>
-            <label>
-              Ур чадвар
-              <input
-                name="skills"
-                defaultValue={user.skills.join(', ')}
-                placeholder="Таслалаар тусгаарлана"
-              />
-            </label>
+            <SkillLevelsEditor skills={user.skills} levels={user.skillLevels} />
             <label>
               Сонирхол
               <input
