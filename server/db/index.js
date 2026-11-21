@@ -19,6 +19,7 @@ export async function connectDatabase() {
     const file = process.env.SQLITE_PATH || './data/teamup.db';
     mkdirSync(dirname(file), { recursive: true });
     sqlite = new DatabaseSync(file);
+    sqlite.function('teamup_lower', { deterministic: true }, value => String(value ?? '').toLowerCase());
     sqlite.exec('PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL; PRAGMA busy_timeout = 5000;');
   } else throw new Error('DB_DRIVER must be sqlite or mssql');
 

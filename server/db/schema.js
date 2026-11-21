@@ -87,6 +87,7 @@ export async function createSchema(db) {
   const indexes = {
     idx_login_user: 'login_attempts(user_id, created_at)',
     idx_project_owner: 'projects(owner_id)',
+    idx_project_search: 'projects(visibility, created_at, id)',
     idx_membership_user: 'memberships(user_id)',
     idx_application_project: 'applications(project_id, status)',
     idx_messages_project: 'messages(project_id, created_at)',

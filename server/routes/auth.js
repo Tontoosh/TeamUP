@@ -88,10 +88,10 @@ export function authRoutes(db, { bypass = false } = {}) {
   });
   router.get('/login-history', requireUser, async (req, res) => {
     const rows = await db.all(
-      'SELECT id, outcome, created_at FROM login_attempts WHERE user_id = ? ORDER BY created_at DESC, id DESC',
+      `SELECT id, outcome, created_at FROM login_attempts WHERE user_id = ? ORDER BY created_at DESC, id DESC ${db.driver === 'sqlite' ? 'LIMIT 50' : 'OFFSET 0 ROWS FETCH NEXT 50 ROWS ONLY'}`,
       [req.user.id]
     );
-    res.json(rows.slice(0, 50));
+    res.json(rows);
   });
   router.post('/logout', async (req, res) => {
     if (cookieValue(req))
@@ -106,6 +106,12 @@ export function authRoutes(db, { bypass = false } = {}) {
     const user = await db.get('SELECT * FROM users WHERE email = ?', [email]);
     if (user) await sendAccountLink(db, user, 'reset');
     res.json({ message: 'Бүртгэлтэй хаяг бол сэргээх холбоос илгээгдлээ.' });
+  });
+  router.post('/resend', async (req, res) => {
+    const { email } = parse(z.object({ email: z.email().max(255).transform(value => value.toLowerCase()) }), req.body);
+    const user = await db.get('SELECT * FROM users WHERE email = ?', [email]);
+    if (user && !user.verified && user.status === 'active') await sendAccountLink(db, user, 'verify');
+    res.json({ message: 'Баталгаажаагүй бүртгэлтэй хаяг бол баталгаажуулах холбоос илгээгдлээ.' });
   });
   for (const purpose of ['verify', 'reset']) {
     router.post(`/${purpose}`, async (req, res) => {

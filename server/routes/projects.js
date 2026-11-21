@@ -1,3 +1,4 @@
+import { relatedRows, searchProjects } from '../project-search.js';
 import { Router } from 'express';
 import { searchCache } from '../search-cache.js';
 import { z } from 'zod';
@@ -45,60 +46,26 @@ const projectSchema = z.object({
     .max(80),
 });
 export async function decorateProjects(db, projects) {
-  const users = await db.all('SELECT * FROM users');
-  const memberships = await db.all('SELECT * FROM memberships');
-  const matching = await loadRoleMatching(db);
+  const users = await relatedRows(db, 'users', 'id', projects.map(project => project.owner_id));
+  const memberships = await relatedRows(db, 'memberships', 'project_id', projects.map(project => project.id));
+  const matching = await loadRoleMatching(db, projects.map(project => project.id));
+  const owners = new Map(users.map(user => [user.id, publicUser(user)]));
+  const counts = new Map();
+  for (const member of memberships) counts.set(member.project_id, (counts.get(member.project_id) || 0) + 1);
   return projects.map(row => ({
     ...matchingProject(row, matching),
-    owner: publicUser(users.find(user => user.id === row.owner_id)),
-    member_count: memberships.filter(member => member.project_id === row.id).length,
+    owner: owners.get(row.owner_id) || null,
+    member_count: counts.get(row.id) || 0,
   }));
 }
 export function projectRoutes(db) {
   const router = Router();
   router.get('/', searchCache(db), async (req, res) => {
-    let projects = await decorateProjects(
-      db,
-      await db.all("SELECT * FROM projects WHERE visibility = 'visible' ORDER BY created_at DESC")
-    );
-    const { q, category, skill, type, duration, mine, status, sort } = req.query;
-    if (mine) {
-      check(req.user, 'Нэвтэрнэ үү.', 401);
-      const memberships = await db.all('SELECT project_id FROM memberships WHERE user_id = ?', [
-        req.user.id,
-      ]);
-      projects = projects.filter(project =>
-        memberships.some(member => member.project_id === project.id)
-      );
-    }
-    if (q)
-      projects = projects.filter(p =>
-        `${p.name} ${p.description} ${p.skills.join(' ')}`
-          .toLowerCase()
-          .includes(String(q).toLowerCase())
-      );
-    if (category) projects = projects.filter(p => p.category === category);
-    if (skill)
-      projects = projects.filter(p =>
-        p.skills.some(s => s.toLowerCase().includes(String(skill).toLowerCase()))
-      );
-    if (type) projects = projects.filter(p => p.project_type === type);
-    if (duration) projects = projects.filter(p => p.duration > 0 && p.duration <= Number(duration));
-    if (status) projects = projects.filter(p => p.status === status);
-    if (sort === 'spaces')
-      projects.sort((a, b) => b.capacity - b.member_count - (a.capacity - a.member_count));
-    const total = projects.length;
-    const page = Math.max(1, Number(req.query.page) || 1);
-    const size = Math.min(24, Math.max(1, Number(req.query.size) || 6));
-    res.json({
-      items: projects.slice((page - 1) * size, page * size),
-      total,
-      page,
-      pages: Math.ceil(total / size),
-    });
+    const { rows, ...page } = await searchProjects(db, req.query, req.user);
+    res.json({ ...page, items: await decorateProjects(db, rows) });
   });
   router.get('/options', async (_req, res) => {
-    const projects = await db.all("SELECT * FROM projects WHERE visibility = 'visible'");
+    const projects = await db.all("SELECT category, project_type, skills FROM projects WHERE visibility = 'visible'");
     const unique = values => [...new Set(values.filter(Boolean))].sort();
     res.json({
       categories: unique(projects.map(p => p.category)),

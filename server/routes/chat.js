@@ -1,3 +1,4 @@
+import { decorateProjects } from './projects.js';
 import { Router } from 'express';
 import { uploadFile } from '../upload.js';
 import { mkdirSync, unlinkSync } from 'node:fs';
@@ -17,6 +18,11 @@ export function chatRoutes(db) {
       types: process.env.UPLOAD_TYPES || '.pdf,.png,.jpg,.jpeg,.webp,.txt,.csv,.zip,.docx,.pptx',
     })
   );
+  router.get('/teams', async (req, res) => {
+    const rows = await db.all(`SELECT p.* FROM projects p JOIN memberships m ON m.project_id = p.id
+      WHERE m.user_id = ? AND p.visibility = 'visible' ORDER BY p.created_at DESC, p.id DESC`, [req.user.id]);
+    res.json({ items: await decorateProjects(db, rows) });
+  });
   router.get('/:projectId', async (req, res) => {
     const project = await projectAccess(db, req.params.projectId, req.user);
     const rows = await db.all(

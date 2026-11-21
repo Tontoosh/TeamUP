@@ -16,7 +16,11 @@
     "db:check": "node scripts/check-db.js",
     "db:test-users": "node scripts/create-test-users.js",
     "test:integration": "node --test tests/auth-integration.test.js",
-    "start:lab10": "node scripts/start-lab10.js"
+    "start:lab10": "node scripts/start-lab10.js",
+    "test:performance": "node scripts/check-search-performance.js",
+    "sql:export": "node scripts/export-sql.js",
+    "db:inspect": "node scripts/inspect-db.js",
+    "db:verify": "node scripts/verify-db-api.js"
   },
   "dependencies": {
     "csv-parse": "^7.0.3",

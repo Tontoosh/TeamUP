@@ -23,6 +23,9 @@ TCP port 1433 is already configured under TCP/IP > IP Addresses > IPAll.
 Double-click start-teamup.cmd in this directory. Keep the console open.
 The launcher builds the frontend, checks the database connection, then starts the API/site.
 Open http://localhost:3001. Press Ctrl+C in the console to stop.
+The launcher displays each startup stage and pauses when it exits, so errors remain visible.
+PowerShell is not required by this launcher. For an existing terminal or automation,
+use `start-teamup.cmd --no-pause` to return immediately after exit.
 
 With Node/npm on PATH, you can also use:
 
@@ -48,7 +51,7 @@ A live TeamUpDB connection still requires TCP/IP to be enabled and SQL Server re
 
 ## Test logins
 
-Double-click create-test-users.cmd once under your normal Windows account.
+Run `npm run db:test-users` once in this directory under your normal Windows account.
 It adds missing student@teamup.mn, owner@teamup.mn, admin@teamup.mn accounts
 with password Teamup123! and verified email status. Existing users, passwords,
 permissions, and project data remain unchanged. Existing accounts can use the
@@ -70,7 +73,7 @@ project type. recruiting maps to open; role requirements and active memberships
 supply capacity, skills and members. Owner access is included separately when the
 source membership table does not include the owner.
 
-Run verify-db-api.cmd to compare all source project titles, owners, details,
+Run `npm run db:verify` to compare all source project titles, owners, details,
 member links and skill reference entries with the actual Express API.
 It saves work/db-api-verification.json for review. Restart start-teamup.cmd
 once the verification passes. GET /api/health now executes a database query

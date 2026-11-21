@@ -27,7 +27,7 @@ function MessageBody({ body }: { body: string }) {
 export function Chat() {
   const { user, toast } = useApp();
   const [params, setParams] = useSearchParams();
-  const teams = useApi<Page<Project>>('/projects?mine=true&size=24');
+  const teams = useApi<Page<Project>>('/chat/teams');
   const projectId = params.get('project') || teams.data?.items[0]?.id;
   const { data, error, loading, reload } = useApi<{ project: Project; messages: Message[] }>(
     projectId ? `/chat/${projectId}` : null,
@@ -76,7 +76,7 @@ export function Chat() {
       {teams.loading ? (
         <Loading />
       ) : teams.error ? (
-        <ErrorState message={teams.error} />
+        <ErrorState message={teams.error} retry={teams.reload} />
       ) : !teams.data?.items.length ? (
         <Empty
           title="Одоогоор багт нэгдээгүй байна"

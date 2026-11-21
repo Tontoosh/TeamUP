@@ -1,5 +1,16 @@
 import { expect, test } from '@playwright/test';
 
+test('verification resend is reachable and gives a neutral confirmation', async ({ page }) => {
+  await page.goto('/login');
+  await page.getByRole('link', { name: 'Баталгаажуулах холбоос дахин авах', exact: true }).click();
+  await expect(page).toHaveURL(/\/resend$/);
+  await page.getByLabel('Имэйл хаяг').fill('unknown@example.com');
+  await page.getByRole('button', { name: 'Холбоос илгээх', exact: true }).click();
+  await expect(page.locator('.success-panel')).toContainText('баталгаажуулах холбоос илгээгдлээ');
+  await page.getByRole('link', { name: 'Нэвтрэх хуудас руу', exact: true }).click();
+  await expect(page.getByLabel('Имэйл хаяг')).toBeVisible();
+});
+
 test('auth pages reset success, errors and password visibility on navigation', async ({ page }) => {
   await page.goto('/forgot');
   await page.getByLabel('Имэйл хаяг').fill('student@teamup.mn');

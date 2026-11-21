@@ -1,3 +1,4 @@
+import { relatedRows } from '../project-search.js';
 import { check, decode, id, publicUser } from '../utils.js';
 import { defaultRole, reputationSummary, skillKey } from './algorithm.js';
 
@@ -13,12 +14,14 @@ const groupBy = (items, key) => {
 const roleKey = (projectId, role) => JSON.stringify([projectId, role]);
 
 export async function loadUserMatching(db, userId) {
-  const where = userId ? ' WHERE user_id = ?' : '';
-  const [levels, reviews] = await Promise.all([
-    db.all(`SELECT * FROM user_skill_levels${where}`, userId ? [userId] : []),
-    db.all(`SELECT r.* FROM peer_reviews r JOIN projects p ON p.id = r.project_id
-      WHERE p.visibility = 'visible'${userId ? ' AND r.target_id = ?' : ''}`, userId ? [userId] : []),
-  ]);
+  const ids = userId === undefined ? null : Array.isArray(userId) ? userId : [userId];
+  const levels = ids ? await relatedRows(db, 'user_skill_levels', 'user_id', ids)
+    : await db.all('SELECT * FROM user_skill_levels');
+  const reviews = [];
+  const batches = ids ? Array.from({ length: Math.ceil(ids.length / 400) }, (_, i) => ids.slice(i * 400, i * 400 + 400)) : [null];
+  for (const batch of batches) reviews.push(...await db.all(
+    `SELECT r.* FROM peer_reviews r JOIN projects p ON p.id = r.project_id
+      WHERE p.visibility = 'visible'${batch ? ` AND r.target_id IN (${batch.map(() => '?').join(',')})` : ''}`, batch || []));
   return {
     levels: groupBy(levels, item => item.user_id),
     reputations: new Map([...groupBy(reviews, item => item.target_id)]
@@ -37,10 +40,12 @@ export function matchingUser(row, data) {
   };
 }
 
-export async function loadRoleMatching(db) {
+export async function loadRoleMatching(db, projectIds) {
+  const rows = (table, field) => projectIds
+    ? relatedRows(db, table, field, projectIds) : db.all(`SELECT * FROM ${table}`);
   const [settings, requirements, completions] = await Promise.all([
-    db.all('SELECT * FROM role_settings'), db.all('SELECT * FROM role_requirements'),
-    db.all('SELECT * FROM project_completions'),
+    rows('role_settings', 'project_id'), rows('role_requirements', 'project_id'),
+    rows('project_completions', 'id'),
   ]);
   return {
     settings: new Map(settings.map(item => [roleKey(item.project_id, item.role), item])),

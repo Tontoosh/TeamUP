@@ -11,3 +11,6 @@ outputs/
 coverage/
 *.log
 .env.docker
+
+.env.*
+!.env.example

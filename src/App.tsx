@@ -44,7 +44,7 @@ export function App() {
       <PageMotion />
       <Routes>
         <Route path="/" element={<Landing />} />
-        {(['login', 'register', 'forgot', 'reset', 'verify'] as const).map(mode => (
+        {(['login', 'register', 'forgot', 'reset', 'verify', 'resend'] as const).map(mode => (
           <Route key={mode} path={`/${mode}`} element={<Auth key={mode} mode={mode} />} />
         ))}
         <Route element={<Layout />}>

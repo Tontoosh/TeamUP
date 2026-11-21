@@ -6,7 +6,7 @@ import { post } from '../api';
 import { useApp } from '../context';
 import { Brand, ErrorState, Loading } from '../components/ui';
 
-export function Auth({ mode }: { mode: 'login' | 'register' | 'forgot' | 'reset' | 'verify' }) {
+export function Auth({ mode }: { mode: 'login' | 'register' | 'forgot' | 'reset' | 'verify' | 'resend' }) {
   const { refresh, googleEnabled, localMail, toast, loading, demoMode } = useApp();
   const [params] = useSearchParams();
   const navigate = useNavigate();
@@ -23,6 +23,7 @@ export function Auth({ mode }: { mode: 'login' | 'register' | 'forgot' | 'reset'
     forgot: 'Нууц үг сэргээх',
     reset: 'Шинэ нууц үг',
     verify: 'Имэйл баталгаажуулах',
+    resend: 'Баталгаажуулах холбоос дахин авах',
   };
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -55,7 +56,7 @@ export function Auth({ mode }: { mode: 'login' | 'register' | 'forgot' | 'reset'
   if (demoMode) {
     const next = params.get('next') || '/projects';
     const safeNext = next.startsWith('/') && !next.startsWith('//') &&
-      !/^\/(login|register|forgot|reset|verify)([/?#]|$)/.test(next);
+      !/^\/(login|register|forgot|reset|verify|resend)([/?#]|$)/.test(next);
     return <Navigate to={safeNext ? next : '/projects'} replace />;
   }
   return (
@@ -93,7 +94,7 @@ export function Auth({ mode }: { mode: 'login' | 'register' | 'forgot' | 'reset'
             <div className="success-panel">
               <CheckCircle2 size={36} />
               <h3>{success}</h3>
-              {localMail && (register || mode === 'forgot') && (
+              {localMail && (register || mode === 'forgot' || mode === 'resend') && (
                 <p>
                   Имэйл үйлчилгээ тохируулаагүй дотоод орчинд холбоос серверийн терминалд гарна.
                 </p>
@@ -208,7 +209,7 @@ export function Auth({ mode }: { mode: 'login' | 'register' | 'forgot' | 'reset'
                     ? 'Түр хүлээнэ үү…'
                     : mode === 'verify'
                     ? 'Баталгаажуулах'
-                    : mode === 'forgot'
+                    : (mode === 'forgot' || mode === 'resend')
                     ? 'Холбоос илгээх'
                     : login
                     ? 'Нэвтрэх'
@@ -225,6 +226,9 @@ export function Auth({ mode }: { mode: 'login' | 'register' | 'forgot' | 'reset'
                     {login ? 'Бүртгүүлэх' : 'Нэвтрэх'}
                   </Link>
                 </p>
+              )}
+              {(login || register || mode === 'verify') && (
+                <p className="auth-switch"><Link to="/resend">Баталгаажуулах холбоос дахин авах</Link></p>
               )}
               {login && (
                 <div className="demo-note">

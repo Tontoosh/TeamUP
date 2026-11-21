@@ -1,3 +1,4 @@
+import { searchPeople } from '../people-search.js';
 import { Router } from 'express';
 import { profileSchema } from '../validation/profile.js';
 import { searchCache } from '../search-cache.js';
@@ -8,7 +9,6 @@ import {
   currentUser,
   decode,
   id,
-  isBlocked,
   link,
   now,
   parse,
@@ -37,29 +37,9 @@ export function userRoutes(db) {
       'Хамтрагч хайхын тулд эхлээд төсөл нийтэлнэ үү.',
       403
     );
-    const matching = await loadUserMatching(db);
-    let users = (await db.all("SELECT * FROM users WHERE status = 'active' AND role = 'student'"))
-      .map(row => matchingUser(row, matching))
-      .filter(user => user.id !== req.user.id);
-    const { q, skill, major, interest, hours, experience } = req.query;
-    if (q)
-      users = users.filter(u =>
-        `${u.name} ${u.school} ${u.major}`.toLowerCase().includes(String(q).toLowerCase())
-      );
-    if (skill)
-      users = users.filter(u =>
-        u.skills.some(s => s.toLowerCase().includes(String(skill).toLowerCase()))
-      );
-    if (major)
-      users = users.filter(u => u.major.toLowerCase().includes(String(major).toLowerCase()));
-    if (interest)
-      users = users.filter(u =>
-        u.interests.some(s => s.toLowerCase().includes(String(interest).toLowerCase()))
-      );
-    if (hours) users = users.filter(u => u.hours >= Number(hours));
-    if (experience) users = users.filter(u => u.experience.includes(String(experience)));
-    const visible = [];
-    for (const user of users) if (!(await isBlocked(db, req.user.id, user.id))) visible.push(user);
+    const result = await searchPeople(db, req.query, req.user.id);
+    const matching = await loadUserMatching(db, result.rows.map(user => user.id));
+    const visible = result.rows.map(row => matchingUser(row, matching));
     let ranked = visible;
     if (req.query.project) {
       const row = await db.get("SELECT * FROM projects WHERE id = ? AND visibility = 'visible'", [String(req.query.project)]);
@@ -75,11 +55,11 @@ export function userRoutes(db) {
         return match ? [{ ...user, match, reasons: match.reasons }] : [];
       }).sort(matchOrder);
     }
-    const page = Math.max(1, Math.floor(Number(req.query.page) || 1));
+    const page = result.page;
     res.json({
-      items: ranked.slice((page - 1) * 12, page * 12), page,
-      total: ranked.length,
-      pages: Math.ceil(ranked.length / 12),
+      items: req.query.project ? ranked.slice((page - 1) * 12, page * 12) : ranked, page,
+      total: req.query.project ? ranked.length : result.total,
+      pages: req.query.project ? Math.ceil(ranked.length / 12) : result.pages,
     });
   });
   router.patch('/me', async (req, res) => {
