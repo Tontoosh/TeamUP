@@ -14,3 +14,14 @@ coverage/
 
 .env.*
 !.env.example
+
+# Local SQL/editor state and database backup artifacts
+.vs/
+db/Documents/
+*.bak
+*.trn
+*.mdf
+*.ldf
+*.ndf
+*.ss
+*.sqlaudit
